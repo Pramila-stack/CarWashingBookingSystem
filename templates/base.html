@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}SparkleWash{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="{% url 'home' %}" class="nav-logo">
+        <svg class="logo-icon" viewBox="0 0 36 24" fill="none">
+          <rect x="2" y="10" width="32" height="10" rx="2" fill="currentColor" opacity=".15"/>
+          <rect x="6" y="6" width="18" height="8" rx="2" fill="currentColor" opacity=".35"/>
+          <rect x="8" y="3" width="14" height="6" rx="2" fill="currentColor"/>
+          <circle cx="9" cy="20" r="3" fill="currentColor"/>
+          <circle cx="27" cy="20" r="3" fill="currentColor"/>
+          <circle cx="9" cy="20" r="1.2" fill="var(--bg)"/>
+          <circle cx="27" cy="20" r="1.2" fill="var(--bg)"/>
+        </svg>
+        <span>Sparkle<strong>Wash</strong></span>
+      </a>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="{% url 'home' %}" class="nav-link">Home</a></li>
+        {% if user.is_authenticated %}
+          {% if user.is_staff or user.is_superuser %}
+            <li><a href="{% url 'admin_dashboard' %}" class="nav-link">Dashboard</a></li>
+            <li><a href="{% url 'admin_bookings' %}" class="nav-link">Bookings</a></li>
+            <li><a href="{% url 'admin_customers' %}" class="nav-link">Customers</a></li>
+            <li><a href="{% url 'admin_packages' %}" class="nav-link">Packages</a></li>
+          {% else %}
+            <li><a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a></li>
+            <li><a href="{% url 'book_service' %}" class="nav-link">Book</a></li>
+            <li><a href="{% url 'booking_history' %}" class="nav-link">My Bookings</a></li>
+            <li><a href="{% url 'profile' %}" class="nav-link">Profile</a></li>
+          {% endif %}
+          <li>
+            <a href="{% url 'logout' %}" class="btn btn-ghost-nav">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+              Sign Out
+            </a>
+          </li>
+        {% else %}
+          <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+          <li><a href="{% url 'register' %}" class="btn btn-accent-nav">Get Started</a></li>
+        {% endif %}
+      </ul>
+
+      <button class="nav-hamburger" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- FLASH MESSAGES -->
+  <div class="toast-stack" id="toastStack">
+    {% for message in messages %}
+    <div class="toast toast-{{ message.tags }}" role="alert">
+      <div class="toast-icon">
+        {% if 'success' in message.tags %}✓{% elif 'error' in message.tags %}✕{% elif 'warning' in message.tags %}⚠{% else %}ℹ{% endif %}
+      </div>
+      <span class="toast-text">{{ message }}</span>
+      <button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>
+    </div>
+    {% endfor %}
+  </div>
+
+  <main>{% block content %}{% endblock %}</main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <svg viewBox="0 0 36 24" fill="none" width="28">
+          <rect x="8" y="3" width="14" height="6" rx="2" fill="white"/>
+          <rect x="2" y="10" width="32" height="10" rx="2" fill="white" opacity=".4"/>
+          <circle cx="9" cy="20" r="3" fill="white"/><circle cx="27" cy="20" r="3" fill="white"/>
+          <circle cx="9" cy="20" r="1.2" fill="#0a0a0a"/><circle cx="27" cy="20" r="1.2" fill="#0a0a0a"/>
+        </svg>
+        <div>
+          <p class="footer-logo">Sparkle<strong>Wash</strong></p>
+          <p class="footer-sub">Premium Car Care Services</p>
+        </div>
+      </div>
+      <div class="footer-grid">
+        <div>
+          <h4>Services</h4>
+          <ul>
+            <li><a href="{% url 'home' %}#services">Basic Wash</a></li>
+            <li><a href="{% url 'home' %}#services">Premium Wash</a></li>
+            <li><a href="{% url 'home' %}#services">Interior Cleaning</a></li>
+            <li><a href="{% url 'home' %}#services">Full Detailing</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Account</h4>
+          <ul>
+            {% if user.is_authenticated %}
+              <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+              <li><a href="{% url 'book_service' %}">Book Service</a></li>
+              <li><a href="{% url 'logout' %}">Sign Out</a></li>
+            {% else %}
+              <li><a href="{% url 'register' %}">Register</a></li>
+              <li><a href="{% url 'login' %}">Login</a></li>
+            {% endif %}
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li>+1 (555) 123-4567</li>
+            <li>info@sparklewash.com</li>
+            <li>123 Clean Avenue, NY</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 SparkleWash. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

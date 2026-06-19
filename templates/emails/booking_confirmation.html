@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Confirmed – {{ booking_id }}</title>
+<style>
+  /* Reset */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f1f5f9; font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; }
+
+  /* Wrapper */
+  .wrapper { max-width: 600px; margin: 32px auto; background: #ffffff;
+             border-radius: 12px; overflow: hidden;
+             box-shadow: 0 4px 24px rgba(0,0,0,.10); }
+
+  /* Header */
+  .header { background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
+            padding: 40px 32px; text-align: center; }
+  .header-logo { font-size: 28px; font-weight: 800; color: #ffffff;
+                 letter-spacing: -0.5px; margin-bottom: 4px; }
+  .header-tagline { color: rgba(255,255,255,.80); font-size: 14px; }
+  .header-icon { font-size: 48px; margin: 16px 0 8px; }
+
+  /* Body */
+  .body { padding: 36px 32px; }
+  .greeting { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .intro { color: #475569; font-size: 15px; line-height: 1.6; margin-bottom: 28px; }
+
+  /* Booking ID banner */
+  .booking-id-banner {
+    background: #eff6ff; border: 2px solid #bfdbfe;
+    border-radius: 8px; padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .booking-id-label { font-size: 12px; font-weight: 600;
+                      text-transform: uppercase; letter-spacing: .08em; color: #64748b; }
+  .booking-id-value { font-size: 18px; font-weight: 800; color: #1d4ed8; }
+
+  /* Detail card */
+  .detail-card { background: #f8fafc; border-radius: 10px;
+                 border: 1px solid #e2e8f0; margin-bottom: 24px; overflow: hidden; }
+  .detail-card-title {
+    background: #1e293b; color: #ffffff;
+    font-size: 12px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; padding: 10px 20px;
+  }
+  .detail-row { display: flex; padding: 12px 20px;
+                border-bottom: 1px solid #e2e8f0; align-items: flex-start; }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-icon { width: 28px; font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .detail-label { width: 140px; font-size: 13px; font-weight: 600;
+                  color: #64748b; flex-shrink: 0; }
+  .detail-value { font-size: 14px; font-weight: 600; color: #1e293b; flex: 1; }
+
+  /* Status badge */
+  .status-badge {
+    display: inline-block; padding: 3px 12px; border-radius: 999px;
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+    background: #fef3c7; color: #92400e;
+  }
+
+  /* Price highlight */
+  .price-value { color: #16a34a; font-size: 16px; font-weight: 800; }
+
+  /* What's next section */
+  .next-steps { background: #f0fdf4; border-radius: 10px;
+                border: 1px solid #bbf7d0; padding: 20px; margin-bottom: 24px; }
+  .next-steps-title { font-size: 14px; font-weight: 700; color: #166534; margin-bottom: 12px; }
+  .next-step { display: flex; align-items: flex-start; gap: 10px;
+               margin-bottom: 10px; font-size: 14px; color: #374151; }
+  .next-step:last-child { margin-bottom: 0; }
+  .step-num {
+    width: 22px; height: 22px; border-radius: 50%; background: #16a34a;
+    color: #ffffff; font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  /* Notes box */
+  .notes-box { background: #fefce8; border-left: 4px solid #fbbf24;
+               border-radius: 0 8px 8px 0; padding: 14px 16px; margin-bottom: 24px; }
+  .notes-label { font-size: 12px; font-weight: 700; color: #92400e;
+                 text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+  .notes-text { font-size: 14px; color: #78350f; }
+
+  /* CTA button */
+  .cta-wrap { text-align: center; margin: 24px 0; }
+  .cta-btn {
+    display: inline-block; background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
+    color: #ffffff; font-size: 15px; font-weight: 700;
+    padding: 14px 36px; border-radius: 8px; text-decoration: none;
+    letter-spacing: .02em;
+  }
+
+  /* Footer */
+  .footer { background: #1e293b; padding: 24px 32px; text-align: center; }
+  .footer-brand { color: #ffffff; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .footer-text { color: #94a3b8; font-size: 12px; line-height: 1.6; }
+  .footer-divider { border: none; border-top: 1px solid #334155; margin: 14px 0; }
+
+  @media (max-width: 600px) {
+    .body { padding: 24px 20px; }
+    .header { padding: 28px 20px; }
+    .booking-id-banner { flex-direction: column; gap: 6px; text-align: center; }
+    .detail-label { width: 110px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-logo">&#9832; {{ site_name }}</div>
+    <div class="header-tagline">Premium Car Wash Services</div>
+    <div class="header-icon">&#128664;</div>
+  </div>
+
+  <!-- Body -->
+  <div class="body">
+    <p class="greeting">Hey {{ customer_name }}, your booking is confirmed! &#127881;</p>
+    <p class="intro">
+      Thank you for choosing <strong>{{ site_name }}</strong>. We have received your
+      appointment and our team will review it shortly. You'll see the status update
+      to <em>Approved</em> once we confirm availability.
+    </p>
+
+    <!-- Booking ID -->
+    <div class="booking-id-banner">
+      <div>
+        <div class="booking-id-label">Your Booking Reference</div>
+      </div>
+      <div class="booking-id-value">{{ booking_id }}</div>
+    </div>
+
+    <!-- Booking Details -->
+    <div class="detail-card">
+      <div class="detail-card-title">&#128203; Booking Details</div>
+
+      <div class="detail-row">
+        <div class="detail-icon">&#10024;</div>
+        <div class="detail-label">Service Package</div>
+        <div class="detail-value">{{ service_name }}</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-icon">&#128663;</div>
+        <div class="detail-label">Vehicle Type</div>
+        <div class="detail-value">{{ vehicle_type }}</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-icon">&#128197;</div>
+        <div class="detail-label">Appointment Date</div>
+        <div class="detail-value">{{ appointment_date }}</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-icon">&#128178;</div>
+        <div class="detail-label">Service Price</div>
+        <div class="detail-value price-value">${{ service_price }}</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-icon">&#128204;</div>
+        <div class="detail-label">Current Status</div>
+        <div class="detail-value">
+          <span class="status-badge">{{ status }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes (only shown if there are notes) -->
+    {% if booking.notes %}
+    <div class="notes-box">
+      <div class="notes-label">&#128221; Your Notes</div>
+      <div class="notes-text">{{ booking.notes }}</div>
+    </div>
+    {% endif %}
+
+    <!-- What's next -->
+    <div class="next-steps">
+      <div class="next-steps-title">&#9989; What Happens Next</div>
+      <div class="next-step">
+        <div class="step-num">1</div>
+        <div>Our team reviews your booking and confirms availability.</div>
+      </div>
+      <div class="next-step">
+        <div class="step-num">2</div>
+        <div>Your status changes from <strong>Pending</strong> to <strong>Approved</strong> — we'll email you.</div>
+      </div>
+      <div class="next-step">
+        <div class="step-num">3</div>
+        <div>Bring your vehicle on <strong>{{ appointment_date }}</strong>. We'll take care of the rest!</div>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:#64748b;margin-bottom:20px;">
+      Need to cancel or make changes? Log in to your dashboard and manage your booking
+      before the appointment date.
+    </p>
+
+    <div class="cta-wrap">
+      <a class="cta-btn" href="http://127.0.0.1:8000/history/">View My Bookings</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-brand">&#9832; {{ site_name }}</div>
+    <hr class="footer-divider">
+    <div class="footer-text">
+      This email was sent because you created a booking on {{ site_name }}.<br>
+      If you didn't make this booking, please contact us at
+      <a href="mailto:{{ admin_email }}" style="color:#7dd3fc;">{{ admin_email }}</a>.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

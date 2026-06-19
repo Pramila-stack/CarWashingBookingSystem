@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Profile — SparkleWash{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+  <div class="page-header">
+    <div class="container">
+      <p class="page-eyebrow">Account</p>
+      <h1 class="page-title">My Profile</h1>
+      <p class="page-sub">Manage your personal information.</p>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:2.5rem;padding-bottom:4rem">
+    <div class="profile-layout">
+
+      <!-- Sidebar -->
+      <div class="profile-sidebar">
+        <div class="avatar-block">
+          <div class="avatar-circle">{{ user.first_name.0|default:user.username.0|upper }}</div>
+          <h3>{{ user.get_full_name|default:user.username }}</h3>
+          <p class="av-username">@{{ user.username }}</p>
+        </div>
+        <div class="sidebar-stats">
+          <div class="sb-stat">
+            <span class="sb-stat-num">{{ total_bookings }}</span>
+            <span class="sb-stat-lbl">Bookings</span>
+          </div>
+          <div class="sb-stat-div"></div>
+          <div class="sb-stat">
+            <span class="sb-stat-num">{{ user.date_joined|date:"Y" }}</span>
+            <span class="sb-stat-lbl">Member Since</span>
+          </div>
+        </div>
+        <div class="sidebar-nav">
+          <a href="{% url 'dashboard' %}" class="sb-nav-link">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="16"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg>
+            Dashboard
+          </a>
+          <a href="{% url 'book_service' %}" class="sb-nav-link">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="16"><path d="M10 4v12M4 10h12" stroke-linecap="round"/></svg>
+            Book Service
+          </a>
+          <a href="{% url 'booking_history' %}" class="sb-nav-link">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="16"><rect x="3" y="4" width="14" height="14" rx="2"/><path d="M7 2v4M13 2v4M3 9h14" stroke-linecap="round"/></svg>
+            My Bookings
+          </a>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="profile-form-card">
+        <h2 class="book-form-title" style="margin-bottom:1.75rem">Edit Information</h2>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="{{ form.first_name.id_for_label }}">First Name</label>
+              {{ form.first_name }}
+              {% if form.first_name.errors %}<p class="field-err">{{ form.first_name.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group">
+              <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+              {{ form.last_name }}
+              {% if form.last_name.errors %}<p class="field-err">{{ form.last_name.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">Email Address</label>
+            {{ form.email }}
+            {% if form.email.errors %}<p class="field-err">{{ form.email.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" value="{{ user.username }}" disabled class="input-disabled">
+            <p class="field-hint">Username cannot be changed.</p>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top:.5rem">Save Changes</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

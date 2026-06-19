@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block title %}Book a Service — SparkleWash{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+  <div class="page-header">
+    <div class="container">
+      <p class="page-eyebrow">New Appointment</p>
+      <h1 class="page-title">Book a Car Wash</h1>
+      <p class="page-sub">Select a package, pick a date, and we'll take care of the rest.</p>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:2.5rem;padding-bottom:4rem">
+    <div class="book-layout">
+
+      <!-- Form -->
+      <div class="book-form-card">
+        <h2 class="book-form-title">Appointment Details</h2>
+        <form method="post" id="bookForm" novalidate>
+          {% csrf_token %}
+
+          <div class="form-group">
+            <label for="{{ form.service_package.id_for_label }}">
+              Service Package
+              <span class="label-req">*</span>
+            </label>
+            {{ form.service_package }}
+            {% if form.service_package.errors %}<p class="field-err">{{ form.service_package.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.vehicle_type.id_for_label }}">
+              Vehicle Type
+              <span class="label-req">*</span>
+            </label>
+            {{ form.vehicle_type }}
+            {% if form.vehicle_type.errors %}<p class="field-err">{{ form.vehicle_type.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.appointment_date.id_for_label }}">
+              Appointment Date
+              <span class="label-req">*</span>
+            </label>
+            {{ form.appointment_date }}
+            {% if form.appointment_date.errors %}<p class="field-err">{{ form.appointment_date.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.notes.id_for_label }}">
+              Notes <span class="label-opt">(optional)</span>
+            </label>
+            {{ form.notes }}
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full" style="margin-top:.5rem;padding:.85rem">
+            Confirm Booking
+          </button>
+        </form>
+      </div>
+
+      <!-- Right panel: package picker + summary -->
+      <div class="book-side">
+        <h2 class="book-form-title">Choose a Package</h2>
+        <div class="pkg-picker" id="pkgPicker">
+          {% for p in packages %}
+          <div class="pkg-pick-card" data-id="{{ p.id }}" data-name="{{ p.name }}" data-price="{{ p.price }}" data-desc="{{ p.description }}">
+            <div class="ppc-top">
+              <span class="ppc-name">{{ p.name }}</span>
+              <span class="ppc-price">${{ p.price }}</span>
+            </div>
+            <p class="ppc-desc">{{ p.description }}</p>
+            <div class="ppc-check">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="4 10 8 14 16 6"/></svg>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Live summary box -->
+        <div class="booking-summary" id="bookingSummary" style="display:none">
+          <div class="bs-header">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="16"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke-linecap="round"/></svg>
+            Booking Summary
+          </div>
+          <div class="bs-row"><span>Package</span><strong id="bsName">—</strong></div>
+          <div class="bs-row"><span>Date</span><strong id="bsDate">—</strong></div>
+          <div class="bs-row"><span>Vehicle</span><strong id="bsVehicle">—</strong></div>
+          <div class="bs-divider"></div>
+          <div class="bs-row bs-total"><span>Total</span><strong id="bsPrice">—</strong></div>
+        </div>
+
+        <div class="book-note">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="14"><circle cx="10" cy="10" r="9"/><path d="M10 9v5M10 6.5v.5"/></svg>
+          A confirmation email will be sent immediately after booking.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  const pkgSelect = document.getElementById('id_service_package');
+  const dateInput = document.getElementById('id_appointment_date');
+  const vehicleSelect = document.getElementById('id_vehicle_type');
+  const cards = document.querySelectorAll('.pkg-pick-card');
+  const summary = document.getElementById('bookingSummary');
+  const bsName = document.getElementById('bsName');
+  const bsDate = document.getElementById('bsDate');
+  const bsVehicle = document.getElementById('bsVehicle');
+  const bsPrice = document.getElementById('bsPrice');
+
+  // Set min date to today
+  const today = new Date().toISOString().split('T')[0];
+  if (dateInput) dateInput.setAttribute('min', today);
+
+  function syncSummary() {
+    const selPkg  = pkgSelect ? pkgSelect.options[pkgSelect.selectedIndex] : null;
+    const selDate = dateInput ? dateInput.value : '';
+    const selVeh  = vehicleSelect ? vehicleSelect.options[vehicleSelect.selectedIndex] : null;
+    if (selPkg && selPkg.value) {
+      summary.style.display = 'block';
+      // Find matching card for price
+      const card = [...cards].find(c => c.dataset.id === selPkg.value);
+      bsName.textContent  = selPkg.text;
+      bsPrice.textContent = card ? '$' + card.dataset.price : '—';
+    } else {
+      summary.style.display = 'none';
+    }
+    bsDate.textContent    = selDate ? new Date(selDate + 'T00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}) : '—';
+    bsVehicle.textContent = selVeh && selVeh.value ? selVeh.text : '—';
+  }
+
+  function highlightCard(id) {
+    cards.forEach(c => c.classList.toggle('ppc-active', c.dataset.id === id));
+  }
+
+  // Clicking a package card selects it in the dropdown
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      if (pkgSelect) {
+        pkgSelect.value = card.dataset.id;
+        pkgSelect.dispatchEvent(new Event('change'));
+      }
+      highlightCard(card.dataset.id);
+      syncSummary();
+    });
+  });
+
+  if (pkgSelect) {
+    pkgSelect.addEventListener('change', () => {
+      highlightCard(pkgSelect.value);
+      syncSummary();
+    });
+    // Init on load
+    highlightCard(pkgSelect.value);
+  }
+  if (dateInput)    dateInput.addEventListener('change', syncSummary);
+  if (vehicleSelect) vehicleSelect.addEventListener('change', syncSummary);
+  syncSummary();
+})();
+</script>
+{% endblock %}

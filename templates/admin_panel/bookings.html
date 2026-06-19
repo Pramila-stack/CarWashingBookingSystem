@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Manage Bookings — SparkleWash Admin{% endblock %}
+
+{% block content %}
+<div class="page-wrap admin-wrap">
+  <div class="admin-header">
+    <div class="container">
+      <div class="page-header-inner">
+        <div>
+          <p class="page-eyebrow">Management Panel</p>
+          <h1 class="page-title">All Bookings</h1>
+          <p class="page-sub">{{ total_count }} booking{{ total_count|pluralize }} found.</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline">← Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:2rem;padding-bottom:4rem">
+
+    <!-- Search + Filter bar -->
+    <div class="admin-toolbar">
+      <form method="get" class="search-form">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="M15 15l-3.5-3.5" stroke-linecap="round"/></svg>
+          <input type="text" name="q" value="{{ search }}" placeholder="Search by name, email, service…" class="search-input">
+        </div>
+        {% if status_filter %}<input type="hidden" name="status" value="{{ status_filter }}">{% endif %}
+        <button type="submit" class="btn btn-primary">Search</button>
+        {% if search or status_filter %}<a href="{% url 'admin_bookings' %}" class="btn btn-ghost">Clear</a>{% endif %}
+      </form>
+      <div class="filter-bar" style="margin:0">
+        <a href="{% url 'admin_bookings' %}{% if search %}?q={{ search }}{% endif %}" class="filter-chip {% if not status_filter %}fc-active{% endif %}">All</a>
+        {% for val, label in status_choices %}
+        <a href="?status={{ val }}{% if search %}&q={{ search }}{% endif %}" class="filter-chip fc-{{ val }} {% if status_filter == val %}fc-active{% endif %}">{{ label }}</a>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if bookings %}
+    <div class="history-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Service</th>
+            <th>Vehicle</th>
+            <th>Date</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in bookings %}
+          <tr>
+            <td><span class="booking-ref">#{{ b.pk }}</span></td>
+            <td>
+              <div class="customer-cell">
+                <div class="cc-avatar">{{ b.customer.first_name.0|default:b.customer.username.0|upper }}</div>
+                <div>
+                  <p class="cc-name">{{ b.customer.get_full_name|default:b.customer.username }}</p>
+                  <p class="cc-email">{{ b.customer.email }}</p>
+                </div>
+              </div>
+            </td>
+            <td><strong>{{ b.service_package.name }}</strong></td>
+            <td>{{ b.get_vehicle_type_display }}</td>
+            <td>{{ b.appointment_date|date:"M d, Y" }}</td>
+            <td class="price-cell">${{ b.service_package.price }}</td>
+            <td><span class="status-pill sp-{{ b.status }}">{{ b.get_status_display }}</span></td>
+            <td>
+              <div class="action-row">
+                <a href="{% url 'admin_booking_detail' b.pk %}" class="table-action-btn">Manage</a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-full">
+      <svg viewBox="0 0 80 80" fill="none" width="64"><rect x="14" y="18" width="52" height="52" rx="5" stroke="currentColor" stroke-width="2" opacity=".25"/><path d="M26 14v8M54 14v8M14 38h52" stroke="currentColor" stroke-width="2" opacity=".25" stroke-linecap="round"/></svg>
+      <h3>No bookings found</h3>
+      <p>Try adjusting the search or filter.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

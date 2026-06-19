@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}Booking #{{ booking.pk }} — SparkleWash Admin{% endblock %}
+
+{% block content %}
+<div class="page-wrap admin-wrap">
+  <div class="admin-header">
+    <div class="container">
+      <div class="page-header-inner">
+        <div>
+          <p class="page-eyebrow">
+            <a href="{% url 'admin_bookings' %}" style="color:inherit;opacity:.7">Bookings</a> / #{{ booking.pk }}
+          </p>
+          <h1 class="page-title">Booking Detail</h1>
+          <p class="page-sub">Manage status, view full details, or delete this booking.</p>
+        </div>
+        <a href="{% url 'admin_bookings' %}" class="btn btn-outline">← Back to Bookings</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:2.5rem;padding-bottom:4rem">
+    <div class="detail-layout">
+
+      <!-- Left: booking info -->
+      <div class="detail-main">
+
+        <!-- Booking summary card -->
+        <div class="detail-card">
+          <div class="detail-card-head">
+            <h2>Booking #{{ booking.pk }}</h2>
+            <span class="status-pill sp-{{ booking.status }}">{{ booking.get_status_display }}</span>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-field">
+              <span class="df-label">Service Package</span>
+              <span class="df-value">{{ booking.service_package.name }}</span>
+            </div>
+            <div class="detail-field">
+              <span class="df-label">Price</span>
+              <span class="df-value price-cell">${{ booking.service_package.price }}</span>
+            </div>
+            <div class="detail-field">
+              <span class="df-label">Vehicle Type</span>
+              <span class="df-value">{{ booking.get_vehicle_type_display }}</span>
+            </div>
+            <div class="detail-field">
+              <span class="df-label">Appointment Date</span>
+              <span class="df-value">{{ booking.appointment_date|date:"l, F j, Y" }}</span>
+            </div>
+            <div class="detail-field">
+              <span class="df-label">Booked On</span>
+              <span class="df-value">{{ booking.created_at|date:"M j, Y · g:i A" }}</span>
+            </div>
+            <div class="detail-field">
+              <span class="df-label">Current Status</span>
+              <span class="df-value"><span class="status-pill sp-{{ booking.status }}">{{ booking.get_status_display }}</span></span>
+            </div>
+          </div>
+          {% if booking.notes %}
+          <div class="detail-notes">
+            <p class="dn-label">Customer Notes</p>
+            <p class="dn-text">{{ booking.notes }}</p>
+          </div>
+          {% endif %}
+          <div class="detail-desc">
+            <p class="dn-label">Package Description</p>
+            <p class="dn-text">{{ booking.service_package.description }}</p>
+          </div>
+        </div>
+
+        <!-- Customer info -->
+        <div class="detail-card" style="margin-top:1.25rem">
+          <div class="detail-card-head"><h2>Customer Information</h2></div>
+          <div class="customer-detail-block">
+            <div class="cdb-avatar">{{ booking.customer.first_name.0|default:booking.customer.username.0|upper }}</div>
+            <div class="cdb-info">
+              <p class="cdb-name">{{ booking.customer.get_full_name|default:booking.customer.username }}</p>
+              <p class="cdb-email">{{ booking.customer.email }}</p>
+              <p class="cdb-meta">Member since {{ booking.customer.date_joined|date:"F Y" }} · {{ booking.customer.bookings.count }} total booking{{ booking.customer.bookings.count|pluralize }}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right: actions panel -->
+      <div class="detail-sidebar">
+
+        <!-- Status update -->
+        <div class="action-card">
+          <h3>Update Status</h3>
+          <p class="action-card-sub">Changing status will email the customer automatically.</p>
+          <form method="post" action="{% url 'admin_update_status' booking.pk %}">
+            {% csrf_token %}
+            <div class="form-group" style="margin-bottom:1rem">
+              <label>New Status</label>
+              <select name="status" class="status-select">
+                <option value="pending"   {% if booking.status == 'pending'   %}selected{% endif %}>Pending</option>
+                <option value="approved"  {% if booking.status == 'approved'  %}selected{% endif %}>Approved</option>
+                <option value="completed" {% if booking.status == 'completed' %}selected{% endif %}>Completed</option>
+                <option value="cancelled" {% if booking.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Update &amp; Notify Customer</button>
+          </form>
+        </div>
+
+        <!-- Status legend -->
+        <div class="action-card" style="margin-top:1rem">
+          <h3>Status Guide</h3>
+          <div class="status-guide">
+            <div class="sg-row"><span class="status-pill sp-pending">Pending</span><span>Awaiting admin review</span></div>
+            <div class="sg-row"><span class="status-pill sp-approved">Approved</span><span>Confirmed, date locked</span></div>
+            <div class="sg-row"><span class="status-pill sp-completed">Completed</span><span>Service delivered</span></div>
+            <div class="sg-row"><span class="status-pill sp-cancelled">Cancelled</span><span>Booking cancelled</span></div>
+          </div>
+        </div>
+
+        <!-- Danger zone -->
+        <div class="action-card danger-zone" style="margin-top:1rem">
+          <h3>Danger Zone</h3>
+          <p class="action-card-sub">Permanently remove this booking. This cannot be undone.</p>
+          <form method="post" action="{% url 'admin_delete_booking' booking.pk %}" onsubmit="return confirm('Permanently delete booking #{{ booking.pk }}? This cannot be undone.')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-full">Delete Booking</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

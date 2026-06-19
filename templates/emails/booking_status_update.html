@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Update – {{ booking_id }}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f1f5f9; font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; }
+  .wrapper { max-width: 600px; margin: 32px auto; background: #ffffff;
+             border-radius: 12px; overflow: hidden;
+             box-shadow: 0 4px 24px rgba(0,0,0,.10); }
+  .header { background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
+            padding: 36px 32px; text-align: center; }
+  .header-logo { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .header-icon { font-size: 48px; margin: 12px 0; }
+  .header-title { color: #f0f9ff; font-size: 20px; font-weight: 700; }
+  .body { padding: 36px 32px; }
+  .greeting { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .intro { color: #475569; font-size: 15px; line-height: 1.6; margin-bottom: 24px; }
+  .status-banner {
+    background: #dcfce7; border: 2px solid #86efac; border-radius: 10px;
+    padding: 20px; text-align: center; margin-bottom: 24px;
+  }
+  .status-label { font-size: 12px; font-weight: 700; color: #166534;
+                  text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+  .status-value { font-size: 28px; font-weight: 800; color: #15803d; }
+  .detail-row { display: flex; padding: 10px 0;
+                border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+  .detail-label { width: 150px; font-weight: 600; color: #64748b; flex-shrink: 0; }
+  .detail-value { font-weight: 600; color: #1e293b; }
+  .cta-wrap { text-align: center; margin: 28px 0 0; }
+  .cta-btn { display: inline-block; background: #16a34a; color: #fff;
+             padding: 13px 30px; border-radius: 8px; font-weight: 700;
+             font-size: 14px; text-decoration: none; }
+  .footer { background: #1e293b; padding: 20px 32px; text-align: center; margin-top: 32px; }
+  .footer-text { color: #94a3b8; font-size: 12px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="header-logo">&#9832; {{ site_name }}</div>
+    <div class="header-icon">&#127881;</div>
+    <div class="header-title">Your Booking Status Has Been Updated</div>
+  </div>
+  <div class="body">
+    <p class="greeting">Hi {{ customer_name }},</p>
+    <p class="intro">
+      Great news! The status of your booking <strong>{{ booking_id }}</strong> has been updated.
+    </p>
+    <div class="status-banner">
+      <div class="status-label">Current Status</div>
+      <div class="status-value">&#10003; {{ status }}</div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Booking ID</div>
+      <div class="detail-value">{{ booking_id }}</div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Service</div>
+      <div class="detail-value">{{ service_name }}</div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Vehicle</div>
+      <div class="detail-value">{{ vehicle_type }}</div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Appointment Date</div>
+      <div class="detail-value">{{ appointment_date }}</div>
+    </div>
+    <div class="cta-wrap">
+      <a href="http://127.0.0.1:8000/history/" class="cta-btn">View My Bookings</a>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="footer-text">
+      &#9832; {{ site_name }} &mdash; Premium Car Wash Services<br>
+      Questions? Contact us at <a href="mailto:{{ admin_email }}" style="color:#7dd3fc;">{{ admin_email }}</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

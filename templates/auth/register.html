@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Create Account — SparkleWash{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block content %}
+<div class="auth-layout auth-layout--reverse">
+  <div class="auth-panel">
+    <div class="auth-brand">
+      <a href="{% url 'home' %}" class="auth-logo">
+        <svg viewBox="0 0 36 24" fill="none" width="32">
+          <rect x="8" y="3" width="14" height="6" rx="2" fill="white"/>
+          <rect x="2" y="10" width="32" height="10" rx="2" fill="white" opacity=".4"/>
+          <circle cx="9" cy="20" r="3" fill="white"/>
+          <circle cx="27" cy="20" r="3" fill="white"/>
+          <circle cx="9" cy="20" r="1.2" fill="#0a0a0a"/>
+          <circle cx="27" cy="20" r="1.2" fill="#0a0a0a"/>
+        </svg>
+        Sparkle<strong>Wash</strong>
+      </a>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <h1>Create your account</h1>
+        <p>Join SparkleWash and book your first car wash today</p>
+      </div>
+
+      <form method="post" class="auth-form" novalidate>
+        {% csrf_token %}
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="{{ form.first_name.id_for_label }}">First Name</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}<p class="field-err">{{ form.first_name.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}<p class="field-err">{{ form.last_name.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="{{ form.username.id_for_label }}">Username</label>
+          {{ form.username }}
+          {% if form.username.errors %}<p class="field-err">{{ form.username.errors.0 }}</p>{% endif %}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.email.id_for_label }}">Email Address</label>
+          {{ form.email }}
+          {% if form.email.errors %}<p class="field-err">{{ form.email.errors.0 }}</p>{% endif %}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.password1.id_for_label }}">Password</label>
+          <div class="input-eye-wrap">
+            {{ form.password1 }}
+            <button type="button" class="eye-btn" id="eyeBtn1" aria-label="Toggle password">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          {% if form.password1.errors %}<p class="field-err">{{ form.password1.errors.0 }}</p>{% endif %}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+          <div class="input-eye-wrap">
+            {{ form.password2 }}
+            <button type="button" class="eye-btn" id="eyeBtn2" aria-label="Toggle confirm password">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          {% if form.password2.errors %}<p class="field-err">{{ form.password2.errors.0 }}</p>{% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full auth-submit">Create Account</button>
+      </form>
+
+      <div class="auth-divider"><span>Already have an account?</span></div>
+      <a href="{% url 'login' %}" class="btn btn-outline btn-full">Sign in instead</a>
+    </div>
+  </div>
+
+  <div class="auth-visual">
+    <div class="auth-visual-inner">
+      <div class="av-badge">Free to Join</div>
+      <h2>Clean cars.<br>Happy drivers.</h2>
+      <p>Book professional car wash services in under 60 seconds. Track every appointment from your personal dashboard.</p>
+      <div class="av-features">
+        <div class="av-feat"><span>✓</span> Book in under 60 seconds</div>
+        <div class="av-feat"><span>✓</span> Real-time status tracking</div>
+        <div class="av-feat"><span>✓</span> Email updates at every step</div>
+        <div class="av-feat"><span>✓</span> Free cancellation on pending bookings</div>
+      </div>
+    </div>
+    <div class="auth-ring auth-ring-1"></div>
+    <div class="auth-ring auth-ring-2"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleEye(btnId, inputId) {
+  document.getElementById(btnId).addEventListener('click', function() {
+    const input = document.getElementById(inputId);
+    const svg = this.querySelector('svg');
+    if (input.type === 'password') {
+      input.type = 'text';
+      svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2"/>';
+    } else {
+      input.type = 'password';
+      svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    }
+  });
+}
+toggleEye('eyeBtn1', '{{ form.password1.id_for_label }}');
+toggleEye('eyeBtn2', '{{ form.password2.id_for_label }}');
+</script>
+{% endblock %}

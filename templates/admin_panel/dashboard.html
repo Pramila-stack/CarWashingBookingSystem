@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard — SparkleWash{% endblock %}
+
+{% block content %}
+<div class="page-wrap admin-wrap">
+
+  <div class="admin-header">
+    <div class="container">
+      <div class="page-header-inner">
+        <div>
+          <p class="page-eyebrow">Management Panel</p>
+          <h1 class="page-title">Admin Dashboard</h1>
+          <p class="page-sub">Full operational overview of SparkleWash.</p>
+        </div>
+        <div style="display:flex;gap:.75rem">
+          <a href="{% url 'admin_bookings' %}" class="btn btn-outline">View All Bookings</a>
+          <a href="{% url 'admin_package_create' %}" class="btn btn-primary">+ Add Package</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:2rem;padding-bottom:4rem">
+
+    <!-- KPI row -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon kpi-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-num">{{ stats.total }}</span>
+          <span class="kpi-lbl">Total Bookings</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon kpi-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-num">{{ stats.pending }}</span>
+          <span class="kpi-lbl">Pending</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon kpi-sky">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-num">{{ stats.approved }}</span>
+          <span class="kpi-lbl">Approved</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon kpi-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-num">{{ stats.completed }}</span>
+          <span class="kpi-lbl">Completed</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon kpi-red">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-num">{{ stats.cancelled }}</span>
+          <span class="kpi-lbl">Cancelled</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon kpi-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-num">{{ stats.customers }}</span>
+          <span class="kpi-lbl">Customers</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon kpi-teal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h4" stroke-linecap="round"/></svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-num">{{ stats.today }}</span>
+          <span class="kpi-lbl">Today's Jobs</span>
+        </div>
+      </div>
+      <div class="kpi-card kpi-card--revenue">
+        <div class="kpi-icon kpi-emerald">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-num">${{ stats.revenue }}</span>
+          <span class="kpi-lbl">Total Revenue</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-grid">
+
+      <!-- Upcoming appointments -->
+      <div class="admin-card admin-card--wide">
+        <div class="admin-card-head">
+          <h2>Upcoming Appointments</h2>
+          <a href="{% url 'admin_bookings' %}?status=approved" class="dash-link">View all →</a>
+        </div>
+        {% if upcoming %}
+        <div class="booking-feed">
+          {% for b in upcoming %}
+          <div class="bf-item">
+            <div class="bf-date-block">
+              <span class="bf-day">{{ b.appointment_date|date:"d" }}</span>
+              <span class="bf-mon">{{ b.appointment_date|date:"M" }}</span>
+            </div>
+            <div class="bf-info">
+              <p class="bf-title">{{ b.service_package.name }}</p>
+              <p class="bf-meta">{{ b.customer.get_full_name|default:b.customer.username }} · {{ b.get_vehicle_type_display }}</p>
+            </div>
+            <div class="bf-right">
+              <span class="status-pill sp-{{ b.status }}">{{ b.get_status_display }}</span>
+              <a href="{% url 'admin_booking_detail' b.pk %}" class="table-action-btn">Manage →</a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-panel"><p>No upcoming appointments.</p></div>
+        {% endif %}
+      </div>
+
+      <!-- Recent bookings -->
+      <div class="admin-card">
+        <div class="admin-card-head">
+          <h2>Recent Bookings</h2>
+          <a href="{% url 'admin_bookings' %}" class="dash-link">All →</a>
+        </div>
+        {% if recent %}
+        <div class="booking-feed">
+          {% for b in recent %}
+          <div class="bf-item">
+            <div class="bf-date-block bf-date-block--sm">
+              <span class="bf-day">{{ b.appointment_date|date:"d" }}</span>
+              <span class="bf-mon">{{ b.appointment_date|date:"M" }}</span>
+            </div>
+            <div class="bf-info">
+              <p class="bf-title">{{ b.customer.get_full_name|default:b.customer.username }}</p>
+              <p class="bf-meta">{{ b.service_package.name }} · #{{ b.pk }}</p>
+            </div>
+            <span class="status-pill sp-{{ b.status }}">{{ b.get_status_display }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-panel"><p>No bookings yet.</p></div>
+        {% endif %}
+      </div>
+
+    </div><!-- /admin-grid -->
+
+    <!-- Quick actions -->
+    <div class="quick-actions">
+      <h3>Quick Actions</h3>
+      <div class="qa-row">
+        <a href="{% url 'admin_bookings' %}?status=pending" class="qa-card">
+          <div class="qa-icon qa-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <strong>Pending Bookings</strong>
+            <p>{{ stats.pending }} awaiting approval</p>
+          </div>
+          <svg class="qa-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 10h10M11 6l4 4-4 4" stroke-linecap="round"/></svg>
+        </a>
+        <a href="{% url 'admin_bookings' %}?status=cancelled" class="qa-card">
+          <div class="qa-icon qa-red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+          </div>
+          <div>
+            <strong>Cancelled Bookings</strong>
+            <p>{{ stats.cancelled }} cancelled</p>
+          </div>
+          <svg class="qa-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 10h10M11 6l4 4-4 4" stroke-linecap="round"/></svg>
+        </a>
+        <a href="{% url 'admin_customers' %}" class="qa-card">
+          <div class="qa-icon qa-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <div>
+            <strong>Customer List</strong>
+            <p>{{ stats.customers }} registered</p>
+          </div>
+          <svg class="qa-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 10h10M11 6l4 4-4 4" stroke-linecap="round"/></svg>
+        </a>
+        <a href="{% url 'admin_packages' %}" class="qa-card">
+          <div class="qa-icon qa-teal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L2 7h20l-6-4z"/></svg>
+          </div>
+          <div>
+            <strong>Service Packages</strong>
+            <p>Manage offerings</p>
+          </div>
+          <svg class="qa-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 10h10M11 6l4 4-4 4" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

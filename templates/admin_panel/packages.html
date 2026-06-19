@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Service Packages — SparkleWash Admin{% endblock %}
+
+{% block content %}
+<div class="page-wrap admin-wrap">
+  <div class="admin-header">
+    <div class="container">
+      <div class="page-header-inner">
+        <div>
+          <p class="page-eyebrow">Management Panel</p>
+          <h1 class="page-title">Service Packages</h1>
+          <p class="page-sub">Create, edit and manage all available wash packages.</p>
+        </div>
+        <a href="{% url 'admin_package_create' %}" class="btn btn-primary">+ New Package</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:2rem;padding-bottom:4rem">
+    <div class="pkg-admin-grid">
+      {% for p in packages %}
+      <div class="pkg-admin-card">
+        <div class="pac-top">
+          <div>
+            <h3 class="pac-name">{{ p.name }}</h3>
+            <p class="pac-desc">{{ p.description }}</p>
+          </div>
+          <div class="pac-price">${{ p.price }}</div>
+        </div>
+        <div class="pac-footer">
+          <span class="pac-count">{{ p.booking_count }} booking{{ p.booking_count|pluralize }}</span>
+          <div class="pac-actions">
+            <a href="{% url 'admin_package_edit' p.pk %}" class="table-action-btn">Edit</a>
+            <form method="post" action="{% url 'admin_package_delete' p.pk %}" style="display:inline"
+                  onsubmit="return confirm('Delete package \'{{ p.name }}\'?')">
+              {% csrf_token %}
+              <button type="submit" class="btn-danger-sm">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="empty-full" style="grid-column:1/-1">
+        <h3>No packages yet.</h3>
+        <a href="{% url 'admin_package_create' %}" class="btn btn-primary" style="margin-top:1rem">Create First Package</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

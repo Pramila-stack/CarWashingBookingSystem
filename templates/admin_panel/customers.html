@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Customers — SparkleWash Admin{% endblock %}
+
+{% block content %}
+<div class="page-wrap admin-wrap">
+  <div class="admin-header">
+    <div class="container">
+      <div class="page-header-inner">
+        <div>
+          <p class="page-eyebrow">Management Panel</p>
+          <h1 class="page-title">Customers</h1>
+          <p class="page-sub">{{ customers.count }} registered customer{{ customers.count|pluralize }}.</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline">← Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:2rem;padding-bottom:4rem">
+    <div class="history-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Joined</th>
+            <th>Bookings</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in customers %}
+          <tr>
+            <td>
+              <div class="customer-cell">
+                <div class="cc-avatar">{{ c.first_name.0|default:c.username.0|upper }}</div>
+                <p class="cc-name">{{ c.get_full_name|default:c.username }}</p>
+              </div>
+            </td>
+            <td><span class="booking-ref">@{{ c.username }}</span></td>
+            <td>{{ c.email|default:"—" }}</td>
+            <td>{{ c.date_joined|date:"M d, Y" }}</td>
+            <td>
+              <span class="booking-count-badge">{{ c.booking_count }}</span>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="empty-cell">No customers registered yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% block title %}SparkleWash — Premium Car Detailing{% endblock %}
+{% block body_class %}home-page{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════════════════════════════════ HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-text">
+      <p class="hero-eyebrow">Premium Car Care · Est. 2020</p>
+      <h1 class="hero-title">
+        Your Vehicle<br>
+        <span class="hero-title-accent">Deserves More</span>
+      </h1>
+      <p class="hero-desc">
+        Professional-grade detailing services that restore, protect and perfect.
+        Book in 60 seconds. Drive away flawless.
+      </p>
+      <div class="hero-cta-row">
+        {% if user.is_authenticated and not user.is_staff %}
+          <a href="{% url 'book_service' %}" class="btn btn-primary btn-lg">Book an Appointment</a>
+          <a href="{% url 'dashboard' %}" class="btn btn-outline btn-lg">My Dashboard</a>
+        {% elif user.is_staff %}
+          <a href="{% url 'admin_dashboard' %}" class="btn btn-primary btn-lg">Admin Dashboard</a>
+        {% else %}
+          <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get Started — Free</a>
+          <a href="{% url 'login' %}" class="btn btn-outline btn-lg">Sign In</a>
+        {% endif %}
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><strong>2,400+</strong><span>Cars Washed</span></div>
+        <div class="hero-stat-div"></div>
+        <div class="hero-stat"><strong>4.9★</strong><span>Avg Rating</span></div>
+        <div class="hero-stat-div"></div>
+        <div class="hero-stat"><strong>100%</strong><span>Satisfaction</span></div>
+      </div>
+    </div>
+
+    <!-- SVG Car Animation -->
+    <div class="hero-visual" aria-hidden="true">
+      <div class="car-scene">
+        <!-- Ground reflection line -->
+        <div class="ground-line"></div>
+
+        <!-- Water spray arcs -->
+        <svg class="spray-svg" viewBox="0 0 320 200" fill="none">
+          <!-- Left spray -->
+          <path class="spray-arc spray-1" d="M60 120 Q30 60 10 20" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" opacity="0"/>
+          <path class="spray-arc spray-2" d="M65 115 Q25 50 0 10" stroke="#93c5fd" stroke-width="1.5" stroke-linecap="round" opacity="0"/>
+          <path class="spray-arc spray-3" d="M58 125 Q35 70 20 30" stroke="#bfdbfe" stroke-width="1" stroke-linecap="round" opacity="0"/>
+          <!-- Right spray -->
+          <path class="spray-arc spray-4" d="M260 120 Q290 60 310 20" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" opacity="0"/>
+          <path class="spray-arc spray-5" d="M255 115 Q295 50 320 10" stroke="#93c5fd" stroke-width="1.5" stroke-linecap="round" opacity="0"/>
+          <path class="spray-arc spray-6" d="M262 125 Q285 70 300 30" stroke="#bfdbfe" stroke-width="1" stroke-linecap="round" opacity="0"/>
+
+          <!-- Water drops -->
+          <circle class="drop d1" cx="15" cy="22" r="3" fill="#60a5fa" opacity="0"/>
+          <circle class="drop d2" cx="5" cy="12" r="2" fill="#93c5fd" opacity="0"/>
+          <circle class="drop d3" cx="22" cy="32" r="2.5" fill="#60a5fa" opacity="0"/>
+          <circle class="drop d4" cx="305" cy="22" r="3" fill="#60a5fa" opacity="0"/>
+          <circle class="drop d5" cx="318" cy="12" r="2" fill="#93c5fd" opacity="0"/>
+          <circle class="drop d6" cx="298" cy="32" r="2.5" fill="#60a5fa" opacity="0"/>
+
+          <!-- Foam bubbles on car body -->
+          <circle class="bubble b1" cx="130" cy="85" r="6" fill="none" stroke="#dbeafe" stroke-width="1.5" opacity="0"/>
+          <circle class="bubble b2" cx="160" cy="72" r="4" fill="none" stroke="#bfdbfe" stroke-width="1" opacity="0"/>
+          <circle class="bubble b3" cx="190" cy="80" r="5" fill="none" stroke="#dbeafe" stroke-width="1.5" opacity="0"/>
+          <circle class="bubble b4" cx="145" cy="95" r="3.5" fill="none" stroke="#eff6ff" stroke-width="1" opacity="0"/>
+          <circle class="bubble b5" cx="175" cy="90" r="4.5" fill="none" stroke="#bfdbfe" stroke-width="1.5" opacity="0"/>
+          <circle class="bubble b6" cx="205" cy="70" r="3" fill="none" stroke="#dbeafe" stroke-width="1" opacity="0"/>
+        </svg>
+
+        <!-- Car SVG — realistic sedan silhouette -->
+        <svg class="car-svg" viewBox="0 0 320 130" fill="none">
+          <!-- Shadow/ground -->
+          <ellipse cx="160" cy="125" rx="130" ry="8" fill="black" opacity="0.4"/>
+
+          <!-- Body lower -->
+          <rect x="18" y="80" width="284" height="38" rx="6" fill="#1e293b"/>
+          <!-- Body upper / cabin -->
+          <path d="M72 80 C85 52 110 38 145 34 L175 34 C210 34 235 52 248 80 Z" fill="#1e293b"/>
+          <!-- Roof highlight -->
+          <path d="M95 78 C105 56 122 44 148 41 L172 41 C198 44 215 56 225 78 Z" fill="#263548" opacity="0.8"/>
+
+          <!-- Windshield -->
+          <path d="M100 78 C110 58 126 46 148 43 L172 43 C194 46 210 58 220 78 Z" fill="#1a3a5c" opacity="0.85"/>
+          <!-- Windshield glare -->
+          <path d="M108 76 C116 60 128 50 148 47 L158 47 C170 50 178 58 186 70 L180 76 Z" fill="white" opacity="0.06"/>
+          <!-- Rear windshield -->
+          <path d="M220 78 L248 78 C242 62 232 50 220 78Z" fill="#1a3a5c" opacity="0.85"/>
+          <path d="M100 78 L72 78 C78 62 88 50 100 78Z" fill="#1a3a5c" opacity="0.85"/>
+
+          <!-- Door lines -->
+          <line x1="160" y1="80" x2="160" y2="116" stroke="#141f2e" stroke-width="1.5"/>
+          <line x1="108" y1="80" x2="108" y2="116" stroke="#141f2e" stroke-width="1.5"/>
+          <line x1="212" y1="80" x2="212" y2="116" stroke="#141f2e" stroke-width="1.5"/>
+
+          <!-- Door handles -->
+          <rect x="128" y="96" width="16" height="4" rx="2" fill="#334155"/>
+          <rect x="176" y="96" width="16" height="4" rx="2" fill="#334155"/>
+
+          <!-- Side mirror -->
+          <path d="M72 72 L62 75 L62 80 L72 80 Z" fill="#263548"/>
+
+          <!-- Body accent line -->
+          <line x1="22" y1="95" x2="298" y2="95" stroke="#0ea5e9" stroke-width="1" opacity="0.5"/>
+
+          <!-- Front grill / bumper area -->
+          <rect x="18" y="98" width="28" height="20" rx="3" fill="#141f2e"/>
+          <!-- Grill slats -->
+          <rect x="21" y="101" width="22" height="2.5" rx="1" fill="#0ea5e9" opacity="0.6"/>
+          <rect x="21" y="106" width="22" height="2.5" rx="1" fill="#0ea5e9" opacity="0.4"/>
+          <rect x="21" y="111" width="22" height="2.5" rx="1" fill="#0ea5e9" opacity="0.3"/>
+
+          <!-- Rear -->
+          <rect x="274" y="98" width="28" height="20" rx="3" fill="#141f2e"/>
+
+          <!-- Headlights front -->
+          <rect x="22" y="82" width="22" height="10" rx="3" fill="#1e3a5c"/>
+          <rect x="24" y="84" width="18" height="6" rx="2" fill="#bfdbfe" opacity="0.9"/>
+          <rect x="24" y="84" width="8" height="6" rx="2" fill="white" opacity="0.7"/>
+
+          <!-- Taillights rear -->
+          <rect x="276" y="82" width="22" height="10" rx="3" fill="#3b0000"/>
+          <rect x="278" y="84" width="18" height="6" rx="2" fill="#f87171" opacity="0.9"/>
+          <rect x="286" y="84" width="8" height="6" rx="2" fill="#fca5a5" opacity="0.7"/>
+
+          <!-- Front wheel arch -->
+          <path d="M55 118 A38 38 0 0 1 131 118" fill="#141f2e"/>
+          <!-- Rear wheel arch -->
+          <path d="M189 118 A38 38 0 0 1 265 118" fill="#141f2e"/>
+
+          <!-- Front wheel -->
+          <circle cx="93" cy="118" r="24" fill="#0f172a"/>
+          <circle cx="93" cy="118" r="18" fill="#1e293b"/>
+          <circle cx="93" cy="118" r="8" fill="#334155"/>
+          <circle cx="93" cy="118" r="4" fill="#475569"/>
+          <!-- Spokes -->
+          <line x1="93" y1="100" x2="93" y2="136" stroke="#475569" stroke-width="2"/>
+          <line x1="75" y1="118" x2="111" y2="118" stroke="#475569" stroke-width="2"/>
+          <line x1="80" y1="105" x2="106" y2="131" stroke="#475569" stroke-width="1.5"/>
+          <line x1="106" y1="105" x2="80" y2="131" stroke="#475569" stroke-width="1.5"/>
+          <!-- Wheel shine -->
+          <path d="M82 106 A18 18 0 0 1 96 100" stroke="white" stroke-width="2" opacity="0.2" stroke-linecap="round"/>
+
+          <!-- Rear wheel -->
+          <circle cx="227" cy="118" r="24" fill="#0f172a"/>
+          <circle cx="227" cy="118" r="18" fill="#1e293b"/>
+          <circle cx="227" cy="118" r="8" fill="#334155"/>
+          <circle cx="227" cy="118" r="4" fill="#475569"/>
+          <line x1="227" y1="100" x2="227" y2="136" stroke="#475569" stroke-width="2"/>
+          <line x1="209" y1="118" x2="245" y2="118" stroke="#475569" stroke-width="2"/>
+          <line x1="214" y1="105" x2="240" y2="131" stroke="#475569" stroke-width="1.5"/>
+          <line x1="240" y1="105" x2="214" y2="131" stroke="#475569" stroke-width="1.5"/>
+          <path d="M216 106 A18 18 0 0 1 230 100" stroke="white" stroke-width="2" opacity="0.2" stroke-linecap="round"/>
+
+          <!-- Body top gloss highlight -->
+          <path d="M110 52 Q160 40 210 52" stroke="white" stroke-width="1.5" opacity="0.12" stroke-linecap="round"/>
+        </svg>
+
+        <!-- Wash brush arms (left + right) -->
+        <div class="brush-arm brush-left">
+          <div class="brush-head"></div>
+        </div>
+        <div class="brush-arm brush-right">
+          <div class="brush-head"></div>
+        </div>
+
+        <!-- Drip drops -->
+        <div class="drip-container" id="dripContainer"></div>
+
+        <!-- Shine sweep overlay -->
+        <div class="shine-sweep"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-cue">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ HOW IT WORKS -->
+<section class="section-how">
+  <div class="container">
+    <div class="section-label">Simple Process</div>
+    <h2 class="section-title">Three Steps to a Spotless Car</h2>
+    <div class="steps-row">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="14" width="32" height="22" rx="3" stroke="currentColor" stroke-width="2"/><path d="M16 14V11a2 2 0 012-2h12a2 2 0 012 2v3" stroke="currentColor" stroke-width="2"/><path d="M24 22v4M20 24h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Choose a Package</h3>
+        <p>Select from our four professionally curated service tiers designed for every need and budget.</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 48 48" fill="none"><rect x="10" y="8" width="28" height="32" rx="3" stroke="currentColor" stroke-width="2"/><path d="M16 17h16M16 23h10M16 29h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Book Your Slot</h3>
+        <p>Pick a date, tell us your vehicle type, and add any special notes. Done in under 60 seconds.</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="currentColor" stroke-width="2"/><path d="M17 24l5 5 9-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Drive Away Spotless</h3>
+        <p>Arrive on your appointment day. Our team gets to work. You leave with a pristine vehicle.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ SERVICES -->
+<section class="section-services" id="services">
+  <div class="container">
+    <div class="section-label">Our Packages</div>
+    <h2 class="section-title">Pick Your Level of Clean</h2>
+    <div class="services-grid">
+      {% for pkg in packages %}
+      <div class="pkg-card {% if forloop.counter == 2 %}pkg-card--featured{% endif %}">
+        {% if forloop.counter == 2 %}<div class="pkg-badge">Most Popular</div>{% endif %}
+        <div class="pkg-icon">
+          {% if forloop.counter == 1 %}
+          <svg viewBox="0 0 48 48" fill="none"><path d="M8 32c0-10 16-24 16-24s16 14 16 24a16 16 0 01-32 0z" stroke="currentColor" stroke-width="2"/></svg>
+          {% elif forloop.counter == 2 %}
+          <svg viewBox="0 0 48 48" fill="none"><polygon points="24,6 29,18 42,18 32,26 36,39 24,31 12,39 16,26 6,18 19,18" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          {% elif forloop.counter == 3 %}
+          <svg viewBox="0 0 48 48" fill="none"><rect x="12" y="8" width="24" height="32" rx="3" stroke="currentColor" stroke-width="2"/><path d="M18 18h12M18 24h8M18 30h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          {% else %}
+          <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="16" stroke="currentColor" stroke-width="2"/><path d="M24 14v4M24 30v4M14 24h4M30 24h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="24" r="4" stroke="currentColor" stroke-width="2"/></svg>
+          {% endif %}
+        </div>
+        <h3 class="pkg-name">{{ pkg.name }}</h3>
+        <p class="pkg-desc">{{ pkg.description }}</p>
+        <div class="pkg-price">
+          <span class="pkg-price-dollar">$</span>
+          <span class="pkg-price-num">{{ pkg.price }}</span>
+        </div>
+        {% if user.is_authenticated and not user.is_staff %}
+          <a href="{% url 'book_service' %}" class="btn {% if forloop.counter == 2 %}btn-primary{% else %}btn-outline{% endif %} btn-full">Book This Package</a>
+        {% else %}
+          <a href="{% url 'register' %}" class="btn {% if forloop.counter == 2 %}btn-primary{% else %}btn-outline{% endif %} btn-full">Get Started</a>
+        {% endif %}
+      </div>
+      {% empty %}
+      <div class="empty-state-center">No packages available yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ WHY US -->
+<section class="section-why">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-text">
+        <div class="section-label">Why SparkleWash</div>
+        <h2 class="section-title" style="text-align:left">Built Around Your Vehicle</h2>
+        <p class="why-body">We don't run a conveyor-belt operation. Every booking is handled by specialists who care about the result, not just the clock.</p>
+        <ul class="why-list">
+          <li><span class="why-check">✓</span> Eco-friendly, pH-balanced products</li>
+          <li><span class="why-check">✓</span> Paint-safe microfibre techniques</li>
+          <li><span class="why-check">✓</span> Real-time booking status tracking</li>
+          <li><span class="why-check">✓</span> Email confirmation on every step</li>
+          <li><span class="why-check">✓</span> Free cancellation (pending bookings)</li>
+        </ul>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'register' %}" class="btn btn-primary" style="margin-top:2rem">Join Free Today</a>
+        {% endif %}
+      </div>
+      <div class="why-metrics">
+        <div class="metric-card">
+          <div class="metric-num">2,400<span>+</span></div>
+          <div class="metric-label">Vehicles Serviced</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num">4.9<span>★</span></div>
+          <div class="metric-label">Average Rating</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num">98<span>%</span></div>
+          <div class="metric-label">On-time Rate</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num">5<span>yr</span></div>
+          <div class="metric-label">In Business</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ CTA BANNER -->
+{% if not user.is_authenticated %}
+<section class="section-cta">
+  <div class="container">
+    <div class="cta-inner">
+      <div>
+        <h2>Ready for the cleanest ride of your life?</h2>
+        <p>Create a free account and book your first appointment in under 2 minutes.</p>
+      </div>
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Book Now — It's Free</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

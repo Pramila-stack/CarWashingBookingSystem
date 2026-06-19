@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Cancelled – {{ booking_id }}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f1f5f9; font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; }
+  .wrapper { max-width: 600px; margin: 32px auto; background: #ffffff;
+             border-radius: 12px; overflow: hidden;
+             box-shadow: 0 4px 24px rgba(0,0,0,.10); }
+  .header { background: linear-gradient(135deg, #374151, #6b7280);
+            padding: 36px 32px; text-align: center; }
+  .header-logo { font-size: 24px; font-weight: 800; color: #ffffff; margin-bottom: 4px; }
+  .header-icon { font-size: 48px; margin: 12px 0; }
+  .header-title { color: #f9fafb; font-size: 20px; font-weight: 700; }
+  .body { padding: 36px 32px; }
+  .greeting { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .intro { color: #475569; font-size: 15px; line-height: 1.6; margin-bottom: 24px; }
+  .summary-box { background: #fee2e2; border: 1px solid #fca5a5;
+                 border-radius: 10px; padding: 20px; margin-bottom: 24px; }
+  .summary-row { display: flex; justify-content: space-between;
+                 font-size: 14px; margin-bottom: 8px; }
+  .summary-row:last-child { margin-bottom: 0; }
+  .summary-label { color: #7f1d1d; font-weight: 600; }
+  .summary-value { color: #1e293b; font-weight: 700; }
+  .rebook-box { background: #eff6ff; border-radius: 10px;
+                border: 1px solid #bfdbfe; padding: 20px; text-align: center; }
+  .rebook-title { font-size: 15px; font-weight: 700; color: #1e40af; margin-bottom: 8px; }
+  .rebook-text { font-size: 14px; color: #475569; margin-bottom: 16px; }
+  .cta-btn { display: inline-block; background: #1d4ed8; color: #fff;
+             padding: 12px 28px; border-radius: 8px; font-weight: 700;
+             font-size: 14px; text-decoration: none; }
+  .footer { background: #1e293b; padding: 20px 32px; text-align: center; }
+  .footer-text { color: #94a3b8; font-size: 12px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="header-logo">&#9832; {{ site_name }}</div>
+    <div class="header-icon">&#10060;</div>
+    <div class="header-title">Booking Cancelled</div>
+  </div>
+  <div class="body">
+    <p class="greeting">Hi {{ customer_name }},</p>
+    <p class="intro">
+      Your booking has been cancelled as requested. Here is a summary of
+      the cancelled appointment for your records.
+    </p>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="summary-label">Booking ID</span>
+        <span class="summary-value">{{ booking_id }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Service</span>
+        <span class="summary-value">{{ service_name }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Original Date</span>
+        <span class="summary-value">{{ appointment_date }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Vehicle</span>
+        <span class="summary-value">{{ vehicle_type }}</span>
+      </div>
+    </div>
+    <div class="rebook-box">
+      <div class="rebook-title">Need a clean car? Book again anytime!</div>
+      <div class="rebook-text">Your account is ready. It only takes 2 minutes to schedule a new appointment.</div>
+      <a href="http://127.0.0.1:8000/book/" class="cta-btn">Book a New Appointment</a>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="footer-text">
+      &#9832; {{ site_name }} &mdash; Premium Car Wash Services<br>
+      Questions? Contact us at <a href="mailto:{{ admin_email }}" style="color:#7dd3fc;">{{ admin_email }}</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
