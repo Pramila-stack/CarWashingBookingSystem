@@ -13,6 +13,7 @@ urlpatterns = [
     path('book/', views.book_service, name='book_service'),
     path('history/', views.booking_history, name='booking_history'),
     path('cancel/<int:pk>/', views.cancel_booking, name='cancel_booking'),
+    path('bookings/<int:pk>/review/', views.submit_review, name='submit_review'),
     path('profile/', views.profile, name='profile'),
 
     # Admin panel

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils import timezone
-from .models import Booking, ServicePackage
+from .models import Booking, Review, ServicePackage
 
 
 class RegisterForm(UserCreationForm):
@@ -27,9 +27,10 @@ class RegisterForm(UserCreationForm):
 class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
-        fields = ['service_package', 'vehicle_type', 'appointment_date', 'notes']
+        fields = ['service_package', 'vehicle_type', 'appointment_date', 'appointment_time', 'notes']
         widgets = {
             'appointment_date': forms.DateInput(attrs={'type': 'date'}),
+            'appointment_time': forms.Select(),
             'notes': forms.Textarea(attrs={'rows': 3}),
         }
 
@@ -38,6 +39,19 @@ class BookingForm(forms.ModelForm):
         if date < timezone.now().date():
             raise forms.ValidationError("Appointment date cannot be in the past.")
         return date
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['rating', 'comment']
+        widgets = {
+            'rating': forms.HiddenInput(),
+            'comment': forms.Textarea(attrs={
+                'rows': 4,
+                'placeholder': 'Share your experience with us (optional)...',
+            }),
+        }
 
 
 class ProfileForm(forms.ModelForm):

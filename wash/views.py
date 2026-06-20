@@ -9,8 +9,8 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .forms import BookingForm, ProfileForm, RegisterForm
-from .models import Booking, ServicePackage
+from .forms import BookingForm, ProfileForm, RegisterForm, ReviewForm
+from .models import Booking, Review, ServicePackage
 from .utils.email import (
     send_admin_booking_notification,
     send_booking_cancellation,
@@ -88,6 +88,7 @@ def dashboard(request):
     bookings = request.user.bookings.select_related('service_package')
     today = timezone.now().date()
     upcoming = bookings.filter(appointment_date__gte=today, status__in=['pending', 'approved'])
+    review_pending = bookings.filter(status='completed').exclude(review__isnull=False)[:2]
     return render(request, 'wash/dashboard.html', {
         'bookings': bookings[:5],
         'upcoming': upcoming[:3],
@@ -95,6 +96,7 @@ def dashboard(request):
         'pending_count': bookings.filter(status='pending').count(),
         'completed_count': bookings.filter(status='completed').count(),
         'approved_count': bookings.filter(status='approved').count(),
+        'review_pending': review_pending,
     })
 
 
@@ -145,6 +147,28 @@ def cancel_booking(request, pk):
     else:
         messages.error(request, "Only pending bookings can be cancelled.")
     return redirect('booking_history')
+
+
+@login_required
+def submit_review(request, pk):
+    booking = get_object_or_404(Booking, pk=pk, customer=request.user)
+    if booking.status != 'completed':
+        messages.error(request, "Reviews can only be submitted for completed bookings.")
+        return redirect('booking_history')
+    if hasattr(booking, 'review'):
+        messages.info(request, "You've already reviewed this booking.")
+        return redirect('booking_history')
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.booking = booking
+            review.save()
+            messages.success(request, "Thank you for your review! We appreciate your feedback.")
+            return redirect('booking_history')
+    else:
+        form = ReviewForm()
+    return render(request, 'wash/submit_review.html', {'form': form, 'booking': booking})
 
 
 @login_required

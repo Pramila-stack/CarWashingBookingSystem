@@ -1722,7 +1722,272 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(.6); cursor
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   RESPONSIVE
+   TIME SLOT PICKER
+══════════════════════════════════════════════════════════════════ */
+.time-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .75rem;
+  margin-top: .5rem;
+}
+.time-slot-card {
+  position: relative;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem .75rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition);
+  user-select: none;
+}
+.time-slot-card:hover { border-color: var(--border-hi); background: var(--surface-3); }
+.time-slot-card.tsc-active {
+  border-color: var(--blue);
+  background: var(--blue-glow);
+  box-shadow: 0 0 0 1px var(--blue);
+}
+.tsc-emoji { font-size: 1.4rem; display: block; margin-bottom: .35rem; line-height: 1; }
+.tsc-label { font-size: .85rem; font-weight: 700; color: var(--text-1); }
+.tsc-time  { font-size: .72rem; color: var(--text-3); margin-top: .2rem; }
+.time-slot-card.tsc-active .tsc-label { color: var(--blue); }
+.tsc-check {
+  position: absolute;
+  top: .5rem; right: .5rem;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--blue);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.tsc-check svg { width: 9px; height: 9px; color: #fff; }
+.time-slot-card.tsc-active .tsc-check { display: flex; }
+
+/* ══════════════════════════════════════════════════════════════════
+   STAR RATING
+══════════════════════════════════════════════════════════════════ */
+.star-rating-widget {
+  display: flex;
+  gap: .35rem;
+  margin: 1rem 0;
+}
+.star-rating-widget .star {
+  font-size: 2.25rem;
+  cursor: pointer;
+  color: var(--surface-4);
+  transition: color .15s, transform .15s;
+  line-height: 1;
+  user-select: none;
+}
+.star-rating-widget .star:hover,
+.star-rating-widget .star.active { color: var(--amber); }
+.star-rating-widget .star:hover  { transform: scale(1.15); }
+.star-label {
+  font-size: .8rem;
+  color: var(--text-3);
+  margin-top: .35rem;
+  min-height: 1.2em;
+  font-weight: 600;
+}
+
+/* Review card */
+.review-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+.review-stars {
+  color: var(--amber);
+  font-size: .95rem;
+  letter-spacing: .05em;
+  margin-bottom: .3rem;
+}
+.review-comment { font-size: .875rem; color: var(--text-2); line-height: 1.6; }
+.review-meta { font-size: .75rem; color: var(--text-3); margin-top: .5rem; }
+
+/* ══════════════════════════════════════════════════════════════════
+   BOOKING STATUS TIMELINE
+══════════════════════════════════════════════════════════════════ */
+.status-timeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.stl-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+  flex: 1;
+  position: relative;
+}
+.stl-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--border-md);
+  z-index: 0;
+}
+.stl-step.stl-done:not(:last-child)::after  { background: var(--green); }
+.stl-step.stl-active:not(:last-child)::after { background: var(--border-md); }
+.stl-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  border: 2px solid var(--border-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .7rem;
+  font-weight: 800;
+  color: var(--text-3);
+  position: relative;
+  z-index: 1;
+  transition: all var(--transition);
+}
+.stl-step.stl-done .stl-dot   { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+.stl-step.stl-active .stl-dot { background: var(--blue-glow); border-color: var(--blue); color: var(--blue); box-shadow: 0 0 0 4px var(--blue-glow); }
+.stl-step.stl-cancelled .stl-dot { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+.stl-label { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-3); text-align: center; }
+.stl-step.stl-done .stl-label   { color: var(--green); }
+.stl-step.stl-active .stl-label { color: var(--blue); }
+.stl-step.stl-cancelled .stl-label { color: var(--red); }
+
+/* ══════════════════════════════════════════════════════════════════
+   REVIEW PROMPT CARD (dashboard nudge)
+══════════════════════════════════════════════════════════════════ */
+.review-prompt-section { margin-top: 1.5rem; margin-bottom: -.5rem; }
+.review-prompt-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, rgba(245,158,11,.06), rgba(245,158,11,.02));
+  border: 1px solid rgba(245,158,11,.2);
+  border-radius: var(--radius);
+  transition: border-color var(--transition);
+}
+.review-prompt-card:hover { border-color: rgba(245,158,11,.4); }
+.rpc-stars { font-size: 1.25rem; flex-shrink: 0; }
+.rpc-body { flex: 1; min-width: 0; }
+.rpc-title { font-size: .875rem; font-weight: 700; color: var(--text-1); }
+.rpc-sub { font-size: .78rem; color: var(--text-3); margin-top: .1rem; }
+
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE BOOKING CARDS (replaces table on small screens)
+══════════════════════════════════════════════════════════════════ */
+.mobile-booking-cards { display: none; }
+.mbc-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+}
+.mbc-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: .75rem;
+}
+.mbc-service { font-size: .9rem; font-weight: 700; color: var(--text-1); }
+.mbc-ref { font-size: .72rem; color: var(--text-3); margin-top: .15rem; }
+.mbc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem .75rem;
+  font-size: .8rem;
+  color: var(--text-3);
+}
+.mbc-meta span { display: flex; align-items: center; gap: .25rem; }
+.mbc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding-top: .65rem;
+  border-top: 1px solid var(--border);
+}
+.mbc-price { font-size: .9rem; font-weight: 800; color: var(--green); }
+.mbc-actions { display: flex; gap: .5rem; align-items: center; }
+
+/* ══════════════════════════════════════════════════════════════════
+   SUBMIT REVIEW PAGE
+══════════════════════════════════════════════════════════════════ */
+.review-page-wrap {
+  min-height: calc(100vh - var(--nav-h));
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3rem 1.5rem 5rem;
+}
+.review-page-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 540px;
+}
+.review-booking-info {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+.rbi-service { font-size: .95rem; font-weight: 700; color: var(--text-1); }
+.rbi-meta { font-size: .8rem; color: var(--text-3); }
+
+/* ══════════════════════════════════════════════════════════════════
+   TABLE SCROLL WRAPPER (mobile)
+══════════════════════════════════════════════════════════════════ */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.table-scroll .data-table { min-width: 680px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE NAV OVERLAY
+══════════════════════════════════════════════════════════════════ */
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 197;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.nav-overlay.active { display: block; }
+
+/* ══════════════════════════════════════════════════════════════════
+   PAGE HEADER — mobile responsive
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 580px) {
+  .page-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .page-header-inner .btn { width: 100%; justify-content: center; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE — 1100px
 ══════════════════════════════════════════════════════════════════ */
 @media (max-width: 1100px) {
   .kpi-grid   { grid-template-columns: repeat(4,1fr); }
@@ -1732,6 +1997,9 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(.6); cursor
   .qa-row     { grid-template-columns: 1fr 1fr; }
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE — 900px
+══════════════════════════════════════════════════════════════════ */
 @media (max-width: 900px) {
   .hero-visual { display: none; }
   .why-grid    { grid-template-columns: 1fr; }
@@ -1743,44 +2011,102 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(.6); cursor
   .auth-panel  { padding: 2.5rem 1.75rem; }
   .steps-row   { flex-direction: column; }
   .step-connector { display: none; }
+  .time-slot-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE — 768px (tablet/mobile breakpoint)
+══════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
+  /* Sticky navbar stays sticky even when menu is open */
+  .navbar { position: sticky; z-index: 200; }
+
+  /* Mobile nav drawer */
   .nav-links { display: none; }
   .nav-links.nav-open {
     display: flex;
     flex-direction: column;
-    position: absolute;
+    position: fixed;
     top: var(--nav-h);
     left: 0; right: 0;
     background: var(--surface-1);
-    border-bottom: 1px solid var(--border);
-    padding: .75rem;
-    gap: .2rem;
-    box-shadow: var(--shadow);
+    border-bottom: 1px solid var(--border-md);
+    padding: .5rem .75rem .75rem;
+    gap: .15rem;
+    box-shadow: 0 16px 48px rgba(0,0,0,.7);
     z-index: 199;
+    max-height: calc(100vh - var(--nav-h));
+    overflow-y: auto;
   }
-  .nav-links.nav-open .nav-link { padding: .65rem 1rem; }
-  .navbar { position: relative; }
+  .nav-links.nav-open .nav-link {
+    padding: .75rem 1rem;
+    font-size: .9rem;
+    border-radius: var(--radius-sm);
+  }
+  .nav-links.nav-open .btn-ghost-nav,
+  .nav-links.nav-open .btn-accent-nav {
+    width: 100%;
+    justify-content: center;
+    padding: .75rem 1rem;
+    margin-top: .25rem;
+    border-radius: var(--radius-sm);
+    font-size: .9rem;
+  }
   .nav-hamburger { display: flex; }
 
+  /* Grids */
   .stats-row  { grid-template-columns: 1fr 1fr; }
   .dash-grid  { grid-template-columns: 1fr; }
   .kpi-grid   { grid-template-columns: 1fr 1fr; }
   .kpi-card--revenue { grid-column: span 2; }
-  .qa-row     { grid-template-columns: 1fr; }
+  .qa-row     { grid-template-columns: 1fr 1fr; }
   .detail-grid { grid-template-columns: 1fr; }
   .detail-field { border-right: none !important; }
+
+  /* Footer */
   .footer-inner { grid-template-columns: 1fr; }
   .footer-grid  { grid-template-columns: 1fr 1fr; }
+
+  /* Home sections */
   .cta-inner  { flex-direction: column; text-align: center; }
+
+  /* Forms */
   .form-row-2 { grid-template-columns: 1fr; }
+
+  /* Toasts */
   .toast-stack { width: calc(100% - 2rem); left: 1rem; right: 1rem; }
+
+  /* Tables: show scroll wrapper on this breakpoint */
+  .history-table-wrap { overflow: hidden; }
+  .mobile-booking-cards {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+  }
+  .history-table-wrap .table-scroll { display: none; }
+
+  /* Time slot picker */
+  .time-slot-grid { grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+  .tsc-emoji { font-size: 1.1rem; }
+  .tsc-label { font-size: .78rem; }
+  .tsc-time  { font-size: .65rem; }
+
+  /* Status timeline compact */
+  .stl-label { display: none; }
+  .status-timeline { padding: 1rem; }
+
+  /* Admin toolbar stacks */
+  .admin-toolbar { flex-direction: column; align-items: stretch; }
+  .search-form { flex-direction: column; }
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE — 480px (small phones)
+══════════════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
   .stats-row { grid-template-columns: 1fr 1fr; }
   .kpi-grid  { grid-template-columns: 1fr 1fr; }
+  .kpi-card--revenue { grid-column: span 2; }
   .hero-title { font-size: 2rem; }
   .page-title { font-size: 1.35rem; }
   .services-grid { grid-template-columns: 1fr; }
@@ -1790,4 +2116,45 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(.6); cursor
   .footer-grid { grid-template-columns: 1fr; }
   .data-table { font-size: .8rem; }
   .data-table th, .data-table td { padding: .7rem .75rem; }
+
+  /* Quick actions single col on very small */
+  .qa-row { grid-template-columns: 1fr; }
+
+  /* KPI single col */
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Review page */
+  .review-page-card { padding: 1.75rem 1.25rem; }
+
+  /* Time slot stack on very small */
+  .time-slot-grid { grid-template-columns: 1fr; }
+  .time-slot-card { display: flex; align-items: center; gap: 1rem; text-align: left; padding: .85rem 1rem; }
+  .tsc-emoji { font-size: 1.5rem; margin-bottom: 0; }
+  .tsc-label { font-size: .875rem; }
+  .tsc-time  { font-size: .78rem; color: var(--text-3); }
+  .tsc-check { top: 50%; right: .75rem; transform: translateY(-50%); }
+
+  /* Profile sidebar stacks above form */
+  .profile-layout { gap: 1rem; }
+
+  /* Stat tile compact */
+  .stat-tile { padding: 1rem; gap: .75rem; }
+  .stat-tile-icon { width: 38px; height: 38px; }
+  .stat-num { font-size: 1.35rem; }
+
+  /* Section padding */
+  .section-how, .section-services, .section-why, .section-cta { padding: 4rem 1.25rem; }
+  .section-title { margin-bottom: 2.5rem; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   PRINT STYLES
+══════════════════════════════════════════════════════════════════ */
+@media print {
+  .navbar, .footer, .toast-stack, .btn, .filter-bar, .page-header .btn { display: none !important; }
+  body { background: #fff; color: #000; }
+  .history-table-wrap { border: 1px solid #ddd; }
+  .data-table th { background: #f5f5f5; color: #333; }
+  .data-table td { color: #333; border-color: #ddd; }
+  .status-pill { border: 1px solid #999; }
 }

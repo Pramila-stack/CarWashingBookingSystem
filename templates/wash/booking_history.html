@@ -11,7 +11,10 @@
           <h1 class="page-title">My Bookings</h1>
           <p class="page-sub">View and manage all your car wash appointments.</p>
         </div>
-        <a href="{% url 'book_service' %}" class="btn btn-primary">+ New Booking</a>
+        <a href="{% url 'book_service' %}" class="btn btn-primary">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="15"><path d="M10 4v12M4 10h12" stroke-linecap="round"/></svg>
+          New Booking
+        </a>
       </div>
     </div>
   </div>
@@ -27,46 +30,142 @@
     </div>
 
     {% if bookings %}
+
+    <!-- ── Desktop Table ─────────────────────────────────── -->
     <div class="history-table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Booking ID</th>
-            <th>Service</th>
-            <th>Vehicle</th>
-            <th>Date</th>
-            <th>Price</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for b in bookings %}
-          <tr>
-            <td><span class="booking-ref">#{{ b.pk }}</span></td>
-            <td>
-              <strong>{{ b.service_package.name }}</strong>
-              {% if b.notes %}<br><span class="table-note">{{ b.notes|truncatechars:36 }}</span>{% endif %}
-            </td>
-            <td>{{ b.get_vehicle_type_display }}</td>
-            <td>{{ b.appointment_date|date:"M d, Y" }}</td>
-            <td class="price-cell">${{ b.service_package.price }}</td>
-            <td><span class="status-pill sp-{{ b.status }}">{{ b.get_status_display }}</span></td>
-            <td>
-              {% if b.status == 'pending' %}
-              <form method="post" action="{% url 'cancel_booking' b.pk %}" onsubmit="return confirm('Cancel this booking?')">
-                {% csrf_token %}
-                <button type="submit" class="btn-danger-sm">Cancel</button>
-              </form>
-              {% else %}
-              <span class="no-action">—</span>
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Service</th>
+              <th>Vehicle</th>
+              <th>Date & Time</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in bookings %}
+            <tr>
+              <td><span class="booking-ref">#{{ b.pk }}</span></td>
+              <td>
+                <strong>{{ b.service_package.name }}</strong>
+                {% if b.notes %}<br><span class="table-note">{{ b.notes|truncatechars:36 }}</span>{% endif %}
+              </td>
+              <td>{{ b.get_vehicle_type_display }}</td>
+              <td>
+                {{ b.appointment_date|date:"M d, Y" }}
+                <br><span class="table-note">{{ b.get_appointment_time_display }}</span>
+              </td>
+              <td class="price-cell">${{ b.service_package.price }}</td>
+              <td><span class="status-pill sp-{{ b.status }}">{{ b.get_status_display }}</span></td>
+              <td>
+                <div class="action-row">
+                  {% if b.status == 'pending' %}
+                  <form method="post" action="{% url 'cancel_booking' b.pk %}" onsubmit="return confirm('Cancel this booking?')">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-danger-sm">Cancel</button>
+                  </form>
+                  {% elif b.status == 'completed' %}
+                    {% if b.review %}
+                    <span class="review-stars" title="{{ b.review.rating }}/5">
+                      {% for i in "12345" %}{% if forloop.counter <= b.review.rating %}★{% else %}☆{% endif %}{% endfor %}
+                    </span>
+                    {% else %}
+                    <a href="{% url 'submit_review' b.pk %}" class="table-action-btn">Leave Review</a>
+                    {% endif %}
+                  {% else %}
+                  <span class="no-action">—</span>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── Status Timeline (visible inside table card) ──── -->
+      {% for b in bookings|slice:":1" %}
+      {% endfor %}
     </div>
+
+    <!-- ── Mobile Card View ──────────────────────────────── -->
+    <div class="mobile-booking-cards">
+      {% for b in bookings %}
+      <div class="mbc-card">
+        <div class="mbc-top">
+          <div>
+            <p class="mbc-service">{{ b.service_package.name }}</p>
+            <p class="mbc-ref">
+              <span class="booking-ref">#{{ b.pk }}</span>
+              &nbsp;·&nbsp; {{ b.appointment_date|date:"M d, Y" }}
+            </p>
+          </div>
+          <span class="status-pill sp-{{ b.status }}">{{ b.get_status_display }}</span>
+        </div>
+
+        <!-- Status progress timeline -->
+        {% if b.status != 'cancelled' %}
+        <div class="status-timeline">
+          <div class="stl-step {% if b.status == 'pending' %}stl-active{% elif b.status != 'cancelled' %}stl-done{% endif %}">
+            <div class="stl-dot">
+              {% if b.status != 'pending' %}✓{% else %}1{% endif %}
+            </div>
+            <span class="stl-label">Pending</span>
+          </div>
+          <div class="stl-step {% if b.status == 'approved' %}stl-active{% elif b.status == 'completed' %}stl-done{% endif %}">
+            <div class="stl-dot">
+              {% if b.status == 'completed' %}✓{% else %}2{% endif %}
+            </div>
+            <span class="stl-label">Approved</span>
+          </div>
+          <div class="stl-step {% if b.status == 'completed' %}stl-active{% endif %}">
+            <div class="stl-dot">3</div>
+            <span class="stl-label">Completed</span>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="mbc-meta">
+          <span>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="12"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M5 1v3M11 1v3M2 7h12" stroke-linecap="round"/></svg>
+            {{ b.get_appointment_time_display }}
+          </span>
+          <span>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="12"><path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>
+            {{ b.get_vehicle_type_display }}
+          </span>
+          <span>Booked {{ b.created_at|date:"M d" }}</span>
+        </div>
+
+        <div class="mbc-footer">
+          <span class="mbc-price">${{ b.service_package.price }}</span>
+          <div class="mbc-actions">
+            {% if b.status == 'pending' %}
+            <form method="post" action="{% url 'cancel_booking' b.pk %}" onsubmit="return confirm('Cancel this booking?')">
+              {% csrf_token %}
+              <button type="submit" class="btn-danger-sm">Cancel</button>
+            </form>
+            {% elif b.status == 'completed' %}
+              {% if b.review %}
+              <span class="review-stars" style="font-size:.85rem" title="{{ b.review.rating }}/5">
+                {% for i in "12345" %}{% if forloop.counter <= b.review.rating %}★{% else %}☆{% endif %}{% endfor %}
+              </span>
+              {% else %}
+              <a href="{% url 'submit_review' b.pk %}" class="table-action-btn">Leave Review</a>
+              {% endif %}
+            {% else %}
+            <span class="no-action">—</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
     {% else %}
     <div class="empty-full">
       <svg viewBox="0 0 80 80" fill="none" width="64"><rect x="14" y="18" width="52" height="52" rx="5" stroke="currentColor" stroke-width="2" opacity=".25"/><path d="M26 14v8M54 14v8M14 38h52" stroke="currentColor" stroke-width="2" opacity=".25" stroke-linecap="round"/><path d="M32 52l6 6 12-12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".4"/></svg>

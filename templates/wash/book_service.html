@@ -7,14 +7,14 @@
     <div class="container">
       <p class="page-eyebrow">New Appointment</p>
       <h1 class="page-title">Book a Car Wash</h1>
-      <p class="page-sub">Select a package, pick a date, and we'll take care of the rest.</p>
+      <p class="page-sub">Select a package, pick a date and time, and we'll take care of the rest.</p>
     </div>
   </div>
 
   <div class="container" style="padding-top:2.5rem;padding-bottom:4rem">
     <div class="book-layout">
 
-      <!-- Form -->
+      <!-- ── Booking Form ──────────────────────────────────── -->
       <div class="book-form-card">
         <h2 class="book-form-title">Appointment Details</h2>
         <form method="post" id="bookForm" novalidate>
@@ -22,29 +22,71 @@
 
           <div class="form-group">
             <label for="{{ form.service_package.id_for_label }}">
-              Service Package
-              <span class="label-req">*</span>
+              Service Package <span class="label-req">*</span>
             </label>
             {{ form.service_package }}
-            {% if form.service_package.errors %}<p class="field-err">{{ form.service_package.errors.0 }}</p>{% endif %}
+            {% if form.service_package.errors %}
+            <p class="field-err">{{ form.service_package.errors.0 }}</p>
+            {% endif %}
           </div>
 
-          <div class="form-group">
-            <label for="{{ form.vehicle_type.id_for_label }}">
-              Vehicle Type
-              <span class="label-req">*</span>
-            </label>
-            {{ form.vehicle_type }}
-            {% if form.vehicle_type.errors %}<p class="field-err">{{ form.vehicle_type.errors.0 }}</p>{% endif %}
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="{{ form.vehicle_type.id_for_label }}">
+                Vehicle Type <span class="label-req">*</span>
+              </label>
+              {{ form.vehicle_type }}
+              {% if form.vehicle_type.errors %}
+              <p class="field-err">{{ form.vehicle_type.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.appointment_date.id_for_label }}">
+                Appointment Date <span class="label-req">*</span>
+              </label>
+              {{ form.appointment_date }}
+              {% if form.appointment_date.errors %}
+              <p class="field-err">{{ form.appointment_date.errors.0 }}</p>
+              {% endif %}
+            </div>
           </div>
 
+          <!-- Time Slot Picker -->
           <div class="form-group">
-            <label for="{{ form.appointment_date.id_for_label }}">
-              Appointment Date
-              <span class="label-req">*</span>
-            </label>
-            {{ form.appointment_date }}
-            {% if form.appointment_date.errors %}<p class="field-err">{{ form.appointment_date.errors.0 }}</p>{% endif %}
+            <label>Appointment Time <span class="label-req">*</span></label>
+            <!-- Visual time slot cards (JS syncs to hidden select below) -->
+            <div class="time-slot-grid" id="timeSlotGrid">
+              <div class="time-slot-card" data-value="morning">
+                <span class="tsc-emoji">🌅</span>
+                <div class="tsc-label">Morning</div>
+                <div class="tsc-time">9 AM – 11 AM</div>
+                <div class="tsc-check">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="4 10 8 14 16 6"/></svg>
+                </div>
+              </div>
+              <div class="time-slot-card" data-value="afternoon">
+                <span class="tsc-emoji">☀️</span>
+                <div class="tsc-label">Afternoon</div>
+                <div class="tsc-time">12 PM – 3 PM</div>
+                <div class="tsc-check">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="4 10 8 14 16 6"/></svg>
+                </div>
+              </div>
+              <div class="time-slot-card" data-value="evening">
+                <span class="tsc-emoji">🌙</span>
+                <div class="tsc-label">Evening</div>
+                <div class="tsc-time">4 PM – 6 PM</div>
+                <div class="tsc-check">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="4 10 8 14 16 6"/></svg>
+                </div>
+              </div>
+            </div>
+            <!-- Hidden select (submitted with form) -->
+            <div style="display:none">{{ form.appointment_time }}</div>
+            {% if form.appointment_time.errors %}
+            <p class="field-err">{{ form.appointment_time.errors.0 }}</p>
+            {% endif %}
           </div>
 
           <div class="form-group">
@@ -54,13 +96,14 @@
             {{ form.notes }}
           </div>
 
-          <button type="submit" class="btn btn-primary btn-full" style="margin-top:.5rem;padding:.85rem">
+          <button type="submit" class="btn btn-primary btn-full" style="margin-top:.5rem;padding:.9rem">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="16"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke-linecap="round"/></svg>
             Confirm Booking
           </button>
         </form>
       </div>
 
-      <!-- Right panel: package picker + summary -->
+      <!-- ── Right Panel: Package Picker + Summary ─────────── -->
       <div class="book-side">
         <h2 class="book-form-title">Choose a Package</h2>
         <div class="pkg-picker" id="pkgPicker">
@@ -86,6 +129,7 @@
           </div>
           <div class="bs-row"><span>Package</span><strong id="bsName">—</strong></div>
           <div class="bs-row"><span>Date</span><strong id="bsDate">—</strong></div>
+          <div class="bs-row"><span>Time</span><strong id="bsTime">—</strong></div>
           <div class="bs-row"><span>Vehicle</span><strong id="bsVehicle">—</strong></div>
           <div class="bs-divider"></div>
           <div class="bs-row bs-total"><span>Total</span><strong id="bsPrice">—</strong></div>
@@ -93,7 +137,7 @@
 
         <div class="book-note">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="14"><circle cx="10" cy="10" r="9"/><path d="M10 9v5M10 6.5v.5"/></svg>
-          A confirmation email will be sent immediately after booking.
+          A confirmation email will be sent to <strong>{{ user.email }}</strong> immediately after booking.
         </div>
       </div>
 
@@ -105,63 +149,73 @@
 {% block extra_js %}
 <script>
 (function () {
-  const pkgSelect = document.getElementById('id_service_package');
-  const dateInput = document.getElementById('id_appointment_date');
-  const vehicleSelect = document.getElementById('id_vehicle_type');
-  const cards = document.querySelectorAll('.pkg-pick-card');
-  const summary = document.getElementById('bookingSummary');
-  const bsName = document.getElementById('bsName');
-  const bsDate = document.getElementById('bsDate');
-  const bsVehicle = document.getElementById('bsVehicle');
-  const bsPrice = document.getElementById('bsPrice');
+  const pkgSelect    = document.getElementById('id_service_package');
+  const dateInput    = document.getElementById('id_appointment_date');
+  const vehicleSelect= document.getElementById('id_vehicle_type');
+  const timeSelect   = document.getElementById('id_appointment_time');
+  const cards        = document.querySelectorAll('.pkg-pick-card');
+  const summary      = document.getElementById('bookingSummary');
+  const bsName       = document.getElementById('bsName');
+  const bsDate       = document.getElementById('bsDate');
+  const bsTime       = document.getElementById('bsTime');
+  const bsVehicle    = document.getElementById('bsVehicle');
+  const bsPrice      = document.getElementById('bsPrice');
 
   // Set min date to today
   const today = new Date().toISOString().split('T')[0];
   if (dateInput) dateInput.setAttribute('min', today);
 
+  const TIME_LABELS = {
+    morning: 'Morning (9 AM – 11 AM)',
+    afternoon: 'Afternoon (12 PM – 3 PM)',
+    evening: 'Evening (4 PM – 6 PM)'
+  };
+
+  function formatDate(val) {
+    if (!val) return '—';
+    return new Date(val + 'T00:00').toLocaleDateString('en-US', {
+      weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+    });
+  }
+
   function syncSummary() {
-    const selPkg  = pkgSelect ? pkgSelect.options[pkgSelect.selectedIndex] : null;
-    const selDate = dateInput ? dateInput.value : '';
-    const selVeh  = vehicleSelect ? vehicleSelect.options[vehicleSelect.selectedIndex] : null;
-    if (selPkg && selPkg.value) {
-      summary.style.display = 'block';
-      // Find matching card for price
-      const card = [...cards].find(c => c.dataset.id === selPkg.value);
-      bsName.textContent  = selPkg.text;
-      bsPrice.textContent = card ? '$' + card.dataset.price : '—';
-    } else {
-      summary.style.display = 'none';
+    const selPkg = pkgSelect ? pkgSelect.options[pkgSelect.selectedIndex] : null;
+    const hasPackage = selPkg && selPkg.value;
+    if (summary) summary.style.display = hasPackage ? 'block' : 'none';
+    if (!hasPackage) return;
+
+    const card = [...cards].find(c => c.dataset.id === selPkg.value);
+    if (bsName)  bsName.textContent  = selPkg.text;
+    if (bsPrice) bsPrice.textContent = card ? '$' + parseFloat(card.dataset.price).toFixed(2) : '—';
+    if (bsDate)  bsDate.textContent  = formatDate(dateInput ? dateInput.value : '');
+    if (bsVehicle && vehicleSelect) {
+      const vOpt = vehicleSelect.options[vehicleSelect.selectedIndex];
+      bsVehicle.textContent = vOpt && vOpt.value ? vOpt.text : '—';
     }
-    bsDate.textContent    = selDate ? new Date(selDate + 'T00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}) : '—';
-    bsVehicle.textContent = selVeh && selVeh.value ? selVeh.text : '—';
+    if (bsTime && timeSelect) {
+      bsTime.textContent = TIME_LABELS[timeSelect.value] || '—';
+    }
   }
 
   function highlightCard(id) {
-    cards.forEach(c => c.classList.toggle('ppc-active', c.dataset.id === id));
+    cards.forEach(c => c.classList.toggle('ppc-active', c.dataset.id === String(id)));
   }
 
-  // Clicking a package card selects it in the dropdown
   cards.forEach(card => {
     card.addEventListener('click', () => {
-      if (pkgSelect) {
-        pkgSelect.value = card.dataset.id;
-        pkgSelect.dispatchEvent(new Event('change'));
-      }
+      if (pkgSelect) { pkgSelect.value = card.dataset.id; }
       highlightCard(card.dataset.id);
       syncSummary();
     });
   });
 
-  if (pkgSelect) {
-    pkgSelect.addEventListener('change', () => {
-      highlightCard(pkgSelect.value);
-      syncSummary();
-    });
-    // Init on load
-    highlightCard(pkgSelect.value);
-  }
-  if (dateInput)    dateInput.addEventListener('change', syncSummary);
+  if (pkgSelect)     pkgSelect.addEventListener('change',     () => { highlightCard(pkgSelect.value); syncSummary(); });
+  if (dateInput)     dateInput.addEventListener('change',     syncSummary);
   if (vehicleSelect) vehicleSelect.addEventListener('change', syncSummary);
+  if (timeSelect)    timeSelect.addEventListener('change',    syncSummary);
+
+  // Init
+  if (pkgSelect) highlightCard(pkgSelect.value);
   syncSummary();
 })();
 </script>

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Leave a Review — SparkleWash{% endblock %}
+
+{% block content %}
+<div class="review-page-wrap">
+  <div class="review-page-card">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:2rem">
+      <div style="font-size:2.5rem;margin-bottom:.75rem">⭐</div>
+      <p class="page-eyebrow" style="text-align:center">Your Feedback</p>
+      <h1 style="font-size:1.5rem;font-weight:800;letter-spacing:-.025em;margin-top:.25rem">Leave a Review</h1>
+      <p style="color:var(--text-2);font-size:.875rem;margin-top:.35rem">How was your experience with us?</p>
+    </div>
+
+    <!-- Booking info card -->
+    <div class="review-booking-info">
+      <p class="rbi-service">{{ booking.service_package.name }}</p>
+      <p class="rbi-meta">
+        <span class="booking-ref">#{{ booking.pk }}</span>
+        &nbsp;·&nbsp; {{ booking.appointment_date|date:"M d, Y" }}
+        &nbsp;·&nbsp; {{ booking.get_appointment_time_display }}
+        &nbsp;·&nbsp; {{ booking.get_vehicle_type_display }}
+      </p>
+    </div>
+
+    <!-- Review form -->
+    <form method="post" id="reviewForm">
+      {% csrf_token %}
+
+      <!-- Star Rating Widget -->
+      <div class="form-group">
+        <label>Your Rating <span class="label-req">*</span></label>
+        <div class="star-rating-widget" id="starRatingWidget">
+          <span class="star" data-value="1">★</span>
+          <span class="star" data-value="2">★</span>
+          <span class="star" data-value="3">★</span>
+          <span class="star" data-value="4">★</span>
+          <span class="star" data-value="5">★</span>
+        </div>
+        <p class="star-label" id="starLabel">Click to rate</p>
+        <!-- Hidden rating input -->
+        <div style="display:none">{{ form.rating }}</div>
+        {% if form.rating.errors %}
+        <p class="field-err">{{ form.rating.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Comment -->
+      <div class="form-group">
+        <label for="{{ form.comment.id_for_label }}">
+          Your Comment <span class="label-opt">(optional)</span>
+        </label>
+        {{ form.comment }}
+        {% if form.comment.errors %}
+        <p class="field-err">{{ form.comment.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:.75rem;margin-top:1.5rem">
+        <button type="submit" class="btn btn-primary btn-full" id="reviewSubmitBtn" style="padding:.85rem">
+          Submit Review
+        </button>
+        <a href="{% url 'booking_history' %}" class="btn btn-outline btn-full">
+          Maybe Later
+        </a>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Prevent submit without a rating selected
+document.getElementById('reviewForm').addEventListener('submit', function(e) {
+  const rating = document.getElementById('id_rating').value;
+  if (!rating) {
+    e.preventDefault();
+    const label = document.getElementById('starLabel');
+    label.textContent = 'Please select a rating before submitting.';
+    label.style.color = 'var(--red)';
+  }
+});
+</script>
+{% endblock %}

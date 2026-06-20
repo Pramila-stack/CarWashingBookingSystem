@@ -48,6 +48,10 @@
               <span class="df-value">{{ booking.appointment_date|date:"l, F j, Y" }}</span>
             </div>
             <div class="detail-field">
+              <span class="df-label">Appointment Time</span>
+              <span class="df-value">{{ booking.get_appointment_time_display }}</span>
+            </div>
+            <div class="detail-field">
               <span class="df-label">Booked On</span>
               <span class="df-value">{{ booking.created_at|date:"M j, Y · g:i A" }}</span>
             </div>
@@ -80,6 +84,33 @@
             </div>
           </div>
         </div>
+
+        <!-- Customer review (if exists) -->
+        {% if booking.review %}
+        <div class="detail-card" style="margin-top:1.25rem">
+          <div class="detail-card-head">
+            <h2>Customer Review</h2>
+            <span class="review-stars" style="font-size:1rem">
+              {% for i in "12345" %}{% if forloop.counter <= booking.review.rating %}★{% else %}☆{% endif %}{% endfor %}
+              <span style="color:var(--text-3);font-size:.8rem;margin-left:.35rem">{{ booking.review.rating }}/5</span>
+            </span>
+          </div>
+          <div style="padding:1.25rem 1.5rem">
+            {% if booking.review.comment %}
+            <p style="font-size:.9rem;color:var(--text-2);line-height:1.65">{{ booking.review.comment }}</p>
+            {% else %}
+            <p style="font-size:.875rem;color:var(--text-3)">No written comment.</p>
+            {% endif %}
+            <p style="font-size:.75rem;color:var(--text-3);margin-top:.75rem">Reviewed on {{ booking.review.created_at|date:"M j, Y · g:i A" }}</p>
+          </div>
+        </div>
+        {% elif booking.status == 'completed' %}
+        <div class="detail-card" style="margin-top:1.25rem;border-style:dashed">
+          <div style="padding:1.25rem 1.5rem;text-align:center;color:var(--text-3)">
+            <p style="font-size:.875rem">No review submitted yet for this completed booking.</p>
+          </div>
+        </div>
+        {% endif %}
 
       </div>
 

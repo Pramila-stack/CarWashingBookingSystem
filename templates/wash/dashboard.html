@@ -62,6 +62,22 @@
       </div>
     </div>
 
+    <!-- Review prompts for completed bookings -->
+    {% if review_pending %}
+    <div class="review-prompt-section">
+      {% for b in review_pending %}
+      <a href="{% url 'submit_review' b.pk %}" class="review-prompt-card" style="text-decoration:none;display:flex;margin-bottom:.6rem">
+        <div class="rpc-stars">⭐</div>
+        <div class="rpc-body">
+          <p class="rpc-title">How was your {{ b.service_package.name }}?</p>
+          <p class="rpc-sub">Booking #{{ b.pk }} · {{ b.appointment_date|date:"M d, Y" }} — Leave a quick rating</p>
+        </div>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="16" style="color:var(--text-3);flex-shrink:0;align-self:center"><path d="M7 7l6 5-6 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
     <!-- Two column layout -->
     <div class="dash-grid">
 

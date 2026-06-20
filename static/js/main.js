@@ -12,9 +12,10 @@
 
 /* ── 1. Navbar ─────────────────────────────────────────────────── */
 (function initNavbar() {
-  const navbar = document.getElementById('navbar');
-  const toggle = document.getElementById('navToggle');
-  const links  = document.getElementById('navLinks');
+  const navbar  = document.getElementById('navbar');
+  const toggle  = document.getElementById('navToggle');
+  const links   = document.getElementById('navLinks');
+  const overlay = document.getElementById('navOverlay');
   if (!navbar) return;
 
   // Scroll shadow
@@ -22,30 +23,38 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Hamburger toggle
+  function closeMenu() {
+    links && links.classList.remove('nav-open');
+    overlay && overlay.classList.remove('active');
+    toggle && toggle.setAttribute('aria-expanded', 'false');
+    toggle && toggle.querySelectorAll('span').forEach(b => b.style.cssText = '');
+    document.body.style.overflow = '';
+  }
+
+  function openMenu() {
+    links && links.classList.add('nav-open');
+    overlay && overlay.classList.add('active');
+    toggle && toggle.setAttribute('aria-expanded', 'true');
+    const bars = toggle ? toggle.querySelectorAll('span') : [];
+    if (bars[0]) bars[0].style.cssText = 'transform:translateY(7px) rotate(45deg)';
+    if (bars[1]) bars[1].style.cssText = 'opacity:0';
+    if (bars[2]) bars[2].style.cssText = 'transform:translateY(-7px) rotate(-45deg)';
+    document.body.style.overflow = 'hidden';
+  }
+
   if (toggle && links) {
     toggle.addEventListener('click', () => {
-      const open = links.classList.toggle('nav-open');
-      toggle.setAttribute('aria-expanded', String(open));
-      // Animate hamburger bars
-      const bars = toggle.querySelectorAll('span');
-      if (open) {
-        bars[0].style.cssText = 'transform:translateY(7px) rotate(45deg)';
-        bars[1].style.cssText = 'opacity:0';
-        bars[2].style.cssText = 'transform:translateY(-7px) rotate(-45deg)';
-      } else {
-        bars.forEach(b => b.style.cssText = '');
-      }
-    });
-
-    // Close on outside click
-    document.addEventListener('click', e => {
-      if (!navbar.contains(e.target)) {
-        links.classList.remove('nav-open');
-        toggle.querySelectorAll('span').forEach(b => b.style.cssText = '');
-      }
+      links.classList.contains('nav-open') ? closeMenu() : openMenu();
     });
   }
+
+  if (overlay) overlay.addEventListener('click', closeMenu);
+
+  // Close on nav link click (mobile)
+  links && links.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+  // Close on Escape key
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 })();
 
 /* ── 2. Toast auto-dismiss ─────────────────────────────────────── */
@@ -204,7 +213,53 @@
   refresh(); // init on page load
 })();
 
-/* ── 5. Global helpers ─────────────────────────────────────────── */
+/* ── 5. Time Slot Picker ───────────────────────────────────────── */
+(function initTimeSlotPicker() {
+  const cards  = document.querySelectorAll('.time-slot-card');
+  const select = document.getElementById('id_appointment_time');
+  if (!cards.length || !select) return;
+
+  function activate(value) {
+    cards.forEach(c => c.classList.toggle('tsc-active', c.dataset.value === value));
+    select.value = value;
+    // Trigger summary refresh if present
+    select.dispatchEvent(new Event('change'));
+  }
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => activate(card.dataset.value));
+  });
+
+  // Init from current select value
+  activate(select.value || 'morning');
+})();
+
+/* ── 6. Star Rating Widget ─────────────────────────────────────── */
+(function initStarRating() {
+  const widget = document.getElementById('starRatingWidget');
+  const input  = document.getElementById('id_rating');
+  const label  = document.getElementById('starLabel');
+  if (!widget || !input) return;
+
+  const LABELS = { 1: 'Poor', 2: 'Fair', 3: 'Good', 4: 'Very Good', 5: 'Excellent' };
+  const stars  = widget.querySelectorAll('.star');
+
+  function highlight(value) {
+    stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.value) <= value));
+    if (label) label.textContent = value ? LABELS[value] || '' : '';
+  }
+
+  stars.forEach(star => {
+    star.addEventListener('mouseenter', () => highlight(parseInt(star.dataset.value)));
+    star.addEventListener('mouseleave', () => highlight(parseInt(input.value) || 0));
+    star.addEventListener('click', () => {
+      input.value = star.dataset.value;
+      highlight(parseInt(star.dataset.value));
+    });
+  });
+})();
+
+/* ── 7. Global helpers ─────────────────────────────────────────── */
 
 // Cancel-booking confirmation
 function confirmCancel() {
