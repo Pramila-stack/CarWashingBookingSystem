@@ -11,7 +11,7 @@ SECRET_KEY = os.environ.get(
     'django-insecure-$+=!_#u)g4-36iz$tn(q9kv(!=cua0kty2hmz@re_o0&(5$&$^'
 )
 
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
@@ -29,7 +29,7 @@ INSTALLED_APPS = [
 # ── Middleware ────────────────────────────────────────────────────────────────
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',   # serves static files in prod
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -58,7 +58,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'car_wash.wsgi.application'
 
 # ── Database ──────────────────────────────────────────────────────────────────
-# Render provides DATABASE_URL for PostgreSQL; falls back to local SQLite for dev
 DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
@@ -83,9 +82,11 @@ USE_TZ = True
 # ── Static files ──────────────────────────────────────────────────────────────
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'         # where collectstatic writes to
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# ── Default primary key field type ────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ── Auth redirects ────────────────────────────────────────────────────────────
@@ -97,23 +98,28 @@ LOGOUT_REDIRECT_URL = '/'
 SITE_NAME = 'SparkleWash'
 
 # ── Email (Gmail SMTP) ────────────────────────────────────────────────────────
-EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST          = 'smtp.gmail.com'
-EMAIL_PORT          = 587
-EMAIL_USE_TLS       = True
-EMAIL_HOST_USER     = os.environ.get('EMAIL_HOST_USER', 'pramilatmg.np@gmail.com')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'pfcz xouo klxn gpnv')
-DEFAULT_FROM_EMAIL  = os.environ.get('EMAIL_HOST_USER', 'pramilatmg.np@gmail.com')
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'pramilatmg.np@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'xgxg wfdy xypd hahk')
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 ADMINS = [
-    ('SparkleWash Admin', os.environ.get('EMAIL_HOST_USER', 'pramilatmg.np@gmail.com')),
+    ('SparkleWash Admin', EMAIL_HOST_USER),
 ]
 
-ADMIN_DASHBOARD_URL = os.environ.get('ADMIN_DASHBOARD_URL', 'http://127.0.0.1:8000/admin-panel/')
+ADMIN_DASHBOARD_URL = os.environ.get(
+    'ADMIN_DASHBOARD_URL',
+    'http://127.0.0.1:8000/admin-panel/'
+)
 
-# ── Production security (applied when DEBUG=False) ───────────────────────────
+# ── HTTPS / secure cookies (off locally, on in production) ───────────────────
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
