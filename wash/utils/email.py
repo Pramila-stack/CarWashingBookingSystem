@@ -36,9 +36,10 @@ def _build_context(booking) -> dict:
         "notes": booking.notes or "None",
         "status": booking.get_status_display(),
         "site_name": getattr(settings, "SITE_NAME", "SparkleWash"),
+        "site_url": getattr(settings, "SITE_URL", "http://127.0.0.1:8000"),
         "admin_email": settings.DEFAULT_FROM_EMAIL,
         "admin_dashboard_url": getattr(
-            settings, "ADMIN_DASHBOARD_URL", "http://127.0.0.1:8000/admin/"
+            settings, "ADMIN_DASHBOARD_URL", "http://127.0.0.1:8000/panel/"
         ),
     }
 

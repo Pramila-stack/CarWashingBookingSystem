@@ -2,8 +2,11 @@ import os
 from pathlib import Path
 
 import dj_database_url
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / 'car_wash' / '.env')
 
 # ── Security ──────────────────────────────────────────────────────────────────
 SECRET_KEY = os.environ.get(
@@ -14,6 +17,12 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+# Trust Railway's reverse proxy
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:8000').split(',')
+]
 
 # ── Apps ──────────────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -113,9 +122,11 @@ ADMINS = [
     ('SparkleWash Admin', EMAIL_HOST_USER),
 ]
 
+SITE_URL = os.environ.get('SITE_URL', 'http://127.0.0.1:8000')
+
 ADMIN_DASHBOARD_URL = os.environ.get(
     'ADMIN_DASHBOARD_URL',
-    'http://127.0.0.1:8000/admin-panel/'
+    'http://127.0.0.1:8000/panel/'
 )
 
 # ── HTTPS / secure cookies (off locally, on in production) ───────────────────
