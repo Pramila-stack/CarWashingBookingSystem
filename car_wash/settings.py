@@ -2,11 +2,8 @@ import os
 from pathlib import Path
 
 import dj_database_url
-from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-load_dotenv(BASE_DIR / 'car_wash' / '.env')
 
 # ── Security ──────────────────────────────────────────────────────────────────
 SECRET_KEY = os.environ.get(
@@ -122,11 +119,9 @@ ADMINS = [
     ('SparkleWash Admin', EMAIL_HOST_USER),
 ]
 
-SITE_URL = os.environ.get('SITE_URL', 'http://127.0.0.1:8000')
-
 ADMIN_DASHBOARD_URL = os.environ.get(
     'ADMIN_DASHBOARD_URL',
-    'http://127.0.0.1:8000/panel/'
+    'http://127.0.0.1:8000/admin-panel/'
 )
 
 # ── HTTPS / secure cookies (off locally, on in production) ───────────────────
